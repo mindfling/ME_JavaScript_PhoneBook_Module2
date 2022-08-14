@@ -1,0 +1,132 @@
+body {
+  min-width: 420px;
+}
+
+.header {
+  background-color: #3E5E93;
+  color: #fff;
+  margin-bottom: 40px;
+  padding: 20px 0;
+  text-align: center;
+}
+
+.logo {
+  font-size: 32px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+@media (max-width: 720px) {
+  .logo {
+    font-size: 20px;
+  }
+}
+
+.delete {
+  display: none;
+}
+
+.del-icon {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border: none;
+  background-color: transparent;
+  background-image: url("../img/del.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.delete.is-visible {
+  width: 10px;
+  display: table-cell;
+}
+
+.btn-wrapper {
+  margin-bottom: 30px;
+}
+
+
+
+.form {
+  padding: 30px 50px;
+  background-color: #fff;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+  left: 50%;
+  position: absolute;
+  top: 0px;
+  opacity: 0;
+  transform: translateX(-50%);
+  transition-property: top, opacity;
+  transition-duration: 0.5s;
+  transition-timing-function: ease-in-out;
+  z-index: 2;
+}
+
+
+.form-title {
+  margin-top: 0;
+  padding-bottom: 20px;
+}
+
+.form-label {
+  width: 80px;
+}
+
+
+.form-overlay {
+  background-color: rgba(0, 0, 0, 0.6);
+  bottom: 0;
+  height: 100%;
+  left: 0;
+  opacity: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  transition: 0.3s ease-in-out;
+  visibility: hidden;
+  width: 100%;
+  z-index: 1;
+}
+
+.form-overlay.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.form-overlay.is-visible .form {
+  opacity: 1;
+  top: 40px;
+}
+
+.close {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  display: block;
+  width: 20px;
+  height: 20px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url("../img/del.svg");
+}
+
+.del-icon:hover,
+.close:hover {
+  opacity: 0.7;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px;
+  background-color: #3E5E93;
+  color: #fff;
+  text-align: center;
+}
