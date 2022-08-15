@@ -12,10 +12,17 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="phonebook/css/style.css">
 
-</head>
+  <script src="phonebook/js/script.js" defer></script>
 
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      phonebook('#app', 'Контакты');
+    })
+  </script>
+</head>
 <body>
 
-</body>
+  <div id="app"></div>
 
+</body>
 </html>

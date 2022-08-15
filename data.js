@@ -1,3 +1,5 @@
+'use strict';
+// список массив объектов данных пользователей
 const data = [
   {
     name: 'Иван',
@@ -18,5 +20,10 @@ const data = [
     name: 'Мария',
     surname: 'Попова',
     phone: '+79876543210',
+  },
+  {
+    name: 'Dmitry',
+    surname: 'Vasylivi4',
+    phone: '+79001234567',
   },
 ];
