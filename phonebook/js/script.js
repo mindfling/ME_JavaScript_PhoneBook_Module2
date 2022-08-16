@@ -118,6 +118,9 @@ const data = [
 
     table.append(thead, tbody);
 
+    table.thead = thead;
+    table.tbody = tbody;
+
     return table;
   };
 
@@ -170,8 +173,7 @@ const data = [
     };
   };
 
-  const init = (selectorApp, title) => {
-    const app = document.querySelector(selectorApp);
+  const renderPhonebook = (app, title) => {
     const header = createHeader();
     const logo = createLogo(title);
     const main = createMain();
@@ -193,6 +195,39 @@ const data = [
     header.headerContainer.append(logo);
     main.mainContainer.append(buttonGroup.btnWrapper, table, form.overlay);
     app.append(header, main);
+
+    return {
+      list: table.tbody,
+    };
+  };
+
+  const renderContacts = (list, data) => {
+    console.log('render list: ', list);
+    console.log('render data: ', data);
+
+    // my realisation
+    data.forEach((contact) => {
+      list.insertAdjacentHTML('beforeend', `
+      <tr>
+        <td class="delete">Удалить</td>
+        <td>${contact.name}</td>
+        <td>${contact.surname}</td>
+        <td>${contact.phone}</td>
+        </tr>
+        `);
+    });
+  };
+
+
+  const init = (selectorApp, title) => {
+    const app = document.querySelector(selectorApp);
+    const phonebook = renderPhonebook(app, title);
+    console.log('phonebook: ', phonebook);
+    const {list} = phonebook;
+
+    renderContacts(list, data);
+
+    return app;
   };
 
   window.phonebookInit = init;
