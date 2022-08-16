@@ -201,21 +201,51 @@ const data = [
     };
   };
 
+  // const createRow = dataObj => {
+  const createRow = ({name: firstname, surname, phone}) => {
+    const tr = document.createElement('tr');
+
+    const tdDel = document.createElement('td');
+    tdDel.classList.add('delete');
+    const buttonDel = document.createElement('button');
+    buttonDel.classList.add('del-icon');
+    tdDel.append(buttonDel);
+    
+    const tdName = document.createElement('td');
+    tdName.textContent = firstname;
+    
+    const tdSurname = document.createElement('td');
+    tdSurname.textContent = surname;
+    
+    const tdPhone = document.createElement('td');
+    const phoneLink = document.createElement('a');
+    phoneLink.href = 'tel:' + phone;
+    phoneLink.textContent = phone;
+    tdPhone.append(href);
+
+    tr.append(tdDel, tdName, tdSurname, tdPhone);
+
+    return tr;
+  }
+
   const renderContacts = (list, data) => {
     console.log('render list: ', list);
     console.log('render data: ', data);
 
-    // my realisation
-    data.forEach((contact) => {
-      list.insertAdjacentHTML('beforeend', `
-      <tr>
-        <td class="delete">Удалить</td>
-        <td>${contact.name}</td>
-        <td>${contact.surname}</td>
-        <td>${contact.phone}</td>
-        </tr>
-        `);
-    });
+    const allRows = data.map(createRow);
+    list.append(...allRows);
+
+    // //? my realisation
+    // data.forEach((contact) => {
+    //   list.insertAdjacentHTML('beforeend', `
+    //   <tr>
+    //     <td class="delete">Удалить</td>
+    //     <td>${contact.name}</td>
+    //     <td>${contact.surname}</td>
+    //     <td>${contact.phone}</td>
+    //     </tr>
+    //     `);
+    // });
   };
 
 
