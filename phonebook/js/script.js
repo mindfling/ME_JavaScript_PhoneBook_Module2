@@ -28,7 +28,6 @@ const data = [
   },
 ];
 
-
 {
   const createContainer = () => {
     const container = document.createElement('div');
@@ -122,7 +121,54 @@ const data = [
     return table;
   };
 
-  
+  const createForm = () => {
+    const overlay = document.createElement('div');
+    overlay.classList.add('form-overlay');
+
+    const form = document.createElement('form');
+    form.classList.add('form');
+    form.insertAdjacentHTML('beforeend', `
+      <button class="close" type="button"></button>
+      <h2 class="form-title">Добавить Контакты</h2>
+      <div class="form-group">
+        <label class="form-lable" for="name">Имя</label>
+        <input class="form-input" name="name"
+            id="name" type="text" required>
+      </div>
+      <div class="form-group">
+        <label class="form-lable" for="surname">Фамилия</label>
+        <input class="form-input" name="surname"
+            id="surname" type="text" required>
+      </div>
+      <div class="form-group">
+        <label class="form-lable" for="phone">Телефон</label>
+        <input class="form-input" name="phone"
+            id="phone" type="text" required>
+      </div>
+    `);
+
+    const buttonGroup = createButtonGroup([
+      {
+        className: 'btn btn-primary mr-3',
+        type: 'submit',
+        text: 'Добавить',
+      },
+      {
+        className: 'btn btn-danger',
+        type: 'reset',
+        text: 'Отмена',
+      },
+    ]);
+
+    form.append(...buttonGroup.btns);
+
+    overlay.append(form);
+
+    return {
+      overlay,
+      form,
+    };
+  };
 
   const init = (selectorApp, title) => {
     const app = document.querySelector(selectorApp);
@@ -142,9 +188,10 @@ const data = [
       },
     ]);
     const table = createTable();
+    const form = createForm();
 
     header.headerContainer.append(logo);
-    main.mainContainer.append(buttonGroup.btnWrapper, table);
+    main.mainContainer.append(buttonGroup.btnWrapper, table, form.overlay);
     app.append(header, main);
   };
 
