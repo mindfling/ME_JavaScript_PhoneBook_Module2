@@ -102,20 +102,6 @@ const data = [
 
     const tbody = document.createElement('tbody');
 
-    // const rows = data.map({name, surname, phone} => {
-    //   const row = document.createElement('tr');
-    //   const cellName = document.createElement('td');
-    //   cellName.textContent = name;
-    //   const cellSurname = document.createElement('td');
-    //   cellSurname.textContent = surname;
-    //   const cellPhone = document.createElement('td');
-    //   cellPhone.textContent = phone;
-    //   row.append(cellName, cellSurname, cellPhone);
-    //   return row;
-    // });
-    // tbody.append(...rows);
-
-
     table.append(thead, tbody);
 
     table.thead = thead;
@@ -191,12 +177,12 @@ const data = [
     const main = createMain();
     const buttonGroup = createButtonGroup([
       {
-        className: 'btn btn-primary mr-3',
+        className: 'btn btn-primary mr-3 js-add',
         type: 'button',
         text: 'Добавить',
       },
       {
-        className: 'btn btn-danger',
+        className: 'btn btn-danger js-del',
         type: 'button',
         text: 'Удалить',
       },
@@ -214,6 +200,10 @@ const data = [
 
     return {
       list: table.tbody,
+      logo,
+      btnAdd: buttonGroup.btns[0],
+      formOverlay: form.overlay,
+      form: form.form,
     };
   };
 
@@ -236,7 +226,7 @@ const data = [
     const phoneLink = document.createElement('a');
     phoneLink.href = 'tel:' + phone;
     phoneLink.textContent = phone;
-
+    tr.phoneLink = phoneLink;
     tdPhone.append(phoneLink);
 
     tr.append(tdDel, tdName, tdSurname, tdPhone);
@@ -246,19 +236,159 @@ const data = [
 
   const renderContacts = (list, data) => {
     const allRows = data.map(createRow);
+    console.log('allRows renderContacts: ', allRows);
     list.append(...allRows);
+    return allRows;
   };
+
+
+  // * practice working lesson05
+  const hoverRow = (allRow, logo) => {
+    const text = logo.textContent;
+
+    allRow.forEach(contact => {
+      contact.addEventListener('mouseenter', () => {
+        logo.textContent = contact.phoneLink?.textContent;
+      });
+      contact.addEventListener('mouseleave', () => {
+        logo.textContent = text;
+      });
+    });
+    return ;
+  };
+
+  // * working lesson05 TEMP
+  const bubblingCapturing = () => {
+    const btnAdd = document.querySelector('.js-add');
+    const btnDel = document.querySelector('.js-del');
+    const btnWrapper = document.querySelector('.btn-wrapper');
+    const main = document.querySelector('main');
+    const app = document.querySelector('#app');
+    const body = document.querySelector('body');
+
+    // const containersAll = document.querySelectorAll('.container');
+    document.querySelectorAll('.container').forEach( (container, i) => {
+      container.addEventListener('click', e => {
+        console.log(e.target.closest('.container'), 'container numb: ' + i);
+      });
+    })
+    
+    
+    btnAdd.addEventListener('click', (e) => {
+      console.log('add');
+    }, false);
+    // * false default в обработчике - значит событие срабатывает на всплытие
+    // * true - на погружение
+    btnDel.addEventListener('click', (e) => {
+      console.log('del');
+    }, false);
+    btnWrapper.addEventListener('click', (e) => {
+      console.log('btnWrapper');
+    }, false);
+    main.addEventListener('click', (e) => {
+      console.log('main');
+    }, false);
+    app.addEventListener('click', (e) => {
+      console.log('app');
+    }, false);
+    body.addEventListener('click', (e) => {
+      console.log('body');
+    }, false);
+
+    window.addEventListener('click', (e) => {
+      console.log('window');
+    });
+    document.addEventListener('click', (e) => {
+      console.log('document');
+    });
+    document.documentElement.addEventListener('click', (e) => {
+      console.log('html documentElement');
+    });
+
+
+
+    
+    
+    return ;
+  }
 
 
   const init = (selectorApp, title) => {
     const app = document.querySelector(selectorApp);
     const phonebook = renderPhonebook(app, title);
 
-    const {list} = phonebook;
+    const {list, logo, btnAdd, formOverlay, form} = phonebook;
 
-    renderContacts(list, data);
-    // todo функционал
+    // todo функционал here
+    
+    const allRow = renderContacts(list, data);
+
+    hoverRow(allRow, logo);
+
+
+
+    const objEvent = {
+      a: '1',
+      b: 22,
+      handleEvent(event) {
+        // просто пример
+        if (event.ctrlKey) {
+          this.bar();
+        } else {
+          this.foo();
+        }
+      },
+      bar() {
+        document.body.style.backgroundColor = 'dimgrey';
+        alert('it was ctrl and click');
+      },
+      foo() {
+        // здесь делаем видимым оверлай и модалку
+        formOverlay.classList.add('is-visible');
+      }
+    };
+
+    // * handleEvent obj
+    btnAdd.addEventListener('click', objEvent);
+    
+    // ? simple click event 
+    // btnAdd.addEventListener('click', () => {
+    //   formOverlay.classList.add('is-visible');
+    // });
+
+    // * блокируем всплытие события
+    form.addEventListener('click', event => {
+      event.stopImmediatePropagation();
+      // event.stopPropagation();
+    })
+
+    formOverlay.addEventListener('click', (event) => {
+      // при клике на оверлай скрывем модалку
+      
+      // if (event.target === formOverlay) {
+      //   formOverlay.classList.remove('is-visible');
+      // };
+
+      // отрабатываем клик по кнокпе close
+      if (event.target === form.querySelector('.close')) {
+        formOverlay.classList.remove('is-visible');
+        return;
+      }
+      
+      // блокируем клик по самой форме
+      // if (event.target.closest('.form')) {
+      //   return;
+      // }
+      
+      formOverlay.classList.remove('is-visible');
+      
+    })
+
+
+    // *
+    // bubblingCapturing();
   };
+
 
   window.phonebookInit = init;
 }
