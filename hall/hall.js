@@ -4,23 +4,25 @@
   const app = document.querySelector('#app');
   
   let countArea = 0; // счетчик наших залов
-  let countSeat = 0; 
 
-  const createSeat = (x, y) => {
+  const createSeat = (y, i) => {
     const seat = document.createElement('div');
     seat.classList.add('seat');
-    seat.dataset.x = x;
-    seat.dataset.y = y;
-    seat.title = `Ряд ${y}, Место ${x}`;
+    seat.dataset.seatNumber = i;
+    // seat.dataset.x = x;
+    // seat.dataset.y = y;
+    // seat.title = `Ряд ${y}, Место ${x}`;
     // seat.textContent = ++countSeat;
     // seat.textContent = '' + y + ' ' + x;
     return seat;
   }
 
-  const createLine = (x, y) => {
+  const createLine = (countLine, y) => {
     const line = document.createElement('div');
     line.classList.add('line');
-    for (let i = 1; i <= x; i++) {
+    line.dataset.lineNumber = countLine;
+
+    for (let i = 1; i <= y; i++) {
       line.append(createSeat(i, y));
     }
     
@@ -28,20 +30,22 @@
   }
   
   const createArea = (x, y) => {
-    countSeat = 0;
+    countArea++;
     const area = document.createElement('div');
-    area.title = 'Залл номер ' + ++countArea;
     area.classList.add('area');
-    for (let j = 1; j <= y; j++) {
-      area.append(createLine(x, j));
+    area.dataset.areaNumber = countArea;
+    // area.title = 'Залл номер ' + ++countArea;
+
+    for (let i = 1; i <= x; i++) {
+      area.append(createLine(i, y));
     }
     
     return area;
   }
 
   // создаем залы
-  app.append(createArea(3, 2));
-  app.append(createArea(6, 8));
-  app.append(createArea(5, 7));
+  app.append(createArea(5, 6));
+  app.append(createArea(8, 6));
+  app.append(createArea(6, 6));
 
 }
