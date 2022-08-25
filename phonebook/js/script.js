@@ -224,10 +224,18 @@ const data = [
 
     const tdPhone = document.createElement('td');
     const phoneLink = document.createElement('a');
+    // todo redact button SIMPLE
+    const redactBtn = createButtonGroup([
+      {
+        className: 'btn btn-success ml-3 redact-btn',
+        type: 'button',
+        text: 'редактировать',
+      },
+    ]);
     phoneLink.href = 'tel:' + phone;
     phoneLink.textContent = phone;
     tr.phoneLink = phoneLink;
-    tdPhone.append(phoneLink);
+    tdPhone.append(phoneLink, ...redactBtn.btns);
 
     tr.append(tdDel, tdName, tdSurname, tdPhone);
 
@@ -236,7 +244,7 @@ const data = [
 
   const renderContacts = (list, data) => {
     const allRows = data.map(createRow);
-    console.log('allRows renderContacts: ', allRows);
+    // console.log('allRows renderContacts: ', allRows);
     list.append(...allRows);
     return allRows;
   };
