@@ -29,6 +29,23 @@ const data = [
 ];
 
 {
+/** 
+ * * используем hash функцию для генерации id контактов
+ * Returns a hash code from a string
+ * @param  {String} str The string to hash.
+ * @return {Number}    A 32bit integer
+ * @see http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
+ */
+  function hashCode(str) {
+    let hash = 0;
+    for (let i = 0, len = str.length; i < len; i++) {
+        let chr = str.charCodeAt(i);
+        hash = (hash << 5) - hash + chr;
+        hash |= 0; // Convert to 32bit integer
+    }
+    return Math.abs(hash);
+  }  
+
   const createContainer = () => {
     const container = document.createElement('div');
     container.classList.add('container');
@@ -209,6 +226,8 @@ const data = [
 
   const createRow = ({name: firstname, surname, phone}) => {
     const tr = document.createElement('tr');
+    tr.title = firstname + surname + phone;
+    tr.id = 'id' + hashCode(firstname + surname + phone);
 
     const tdDel = document.createElement('td');
     tdDel.classList.add('delete');
@@ -313,10 +332,6 @@ const data = [
       console.log('html documentElement');
     });
 
-
-
-    
-    
     return ;
   }
 
@@ -325,10 +340,41 @@ const data = [
     const app = document.querySelector(selectorApp);
     const phonebook = renderPhonebook(app, title);
 
+    // деструктуризируем переменные из объекта
     const {list, logo, btnAdd, formOverlay, form} = phonebook;
 
     // todo функционал here
+    // без хеша
+    console.log('data: ', data);
     
+
+    // добавляем id в массив к каждому объкту используем hash
+    data.forEach((obj, index) => {
+      console.log('obj: ', obj);
+      let res = '';
+      for (const key in obj) {
+        res += '' + obj[key];
+      }
+      obj.index = res;
+      obj.hash = 'hash' + hashCode('' + obj.index);
+    });
+    
+    console.log('data: ', data);
+
+
+    // // test hash
+    // (() => {
+    //   for (let i = 65; i <= 80; i++) {
+    //     let ch = String.fromCharCode(i);
+    //     ch = 'b' + ch + 'a'
+    //     let hash = '0' + hashCode(ch);
+    //     console.log(`${i} -> '${ch}' --> ${hash}`);
+    //   }
+    // })();
+
+
+
+
     const allRow = renderContacts(list, data);
 
     hoverRow(allRow, logo);
@@ -336,43 +382,29 @@ const data = [
 
 
     const objEvent = {
-      a: '1',
-      b: 22,
       handleEvent(event) {
         // просто пример
-        if (event.ctrlKey) {
-          this.bar();
-        } else {
-          this.foo();
-        }
-      },
-      bar() {
-        document.body.style.backgroundColor = 'dimgrey';
-        alert('it was ctrl and click');
-      },
-      foo() {
         // здесь делаем видимым оверлай и модалку
         formOverlay.classList.add('is-visible');
-      }
+      },
     };
 
-    // * handleEvent obj
+    // handleEvent obj
     btnAdd.addEventListener('click', objEvent);
     
-    // ? simple click event 
+    // // simple click event 
     // btnAdd.addEventListener('click', () => {
     //   formOverlay.classList.add('is-visible');
     // });
 
-    // * блокируем всплытие события
-    form.addEventListener('click', event => {
-      event.stopImmediatePropagation();
-      // event.stopPropagation();
-    })
+    // // * блокируем всплытие события
+    // form.addEventListener('click', event => {
+    //   event.stopImmediatePropagation();
+    //   // event.stopPropagation();
+    // })
 
     formOverlay.addEventListener('click', (event) => {
       // при клике на оверлай скрывем модалку
-      
       // if (event.target === formOverlay) {
       //   formOverlay.classList.remove('is-visible');
       // };
@@ -384,17 +416,13 @@ const data = [
       }
       
       // блокируем клик по самой форме
-      // if (event.target.closest('.form')) {
-      //   return;
-      // }
+      if (event.target.closest('.form')) {
+        return;
+      }
       
       formOverlay.classList.remove('is-visible');
       
     })
-
-
-    // *
-    // bubblingCapturing();
   };
 
 
