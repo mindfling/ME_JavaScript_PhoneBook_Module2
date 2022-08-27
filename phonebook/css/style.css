@@ -28,8 +28,9 @@ body {
 
 .del-icon {
   display: block;
-  width: 10px;
-  height: 10px;
+  margin: 8px;
+  width: 13px;
+  height: 13px;
   border: none;
   background-color: transparent;
   background-image: url("../img/del.svg");
