@@ -114,6 +114,7 @@ const data = [
         <th>Имя</th>
         <th>Фамилия</th>
         <th>Телефон</th>
+        <th class="delete">Редактировать</th>
       </tr>
     `);
 
@@ -201,7 +202,7 @@ const data = [
       {
         className: 'btn btn-danger js-del',
         type: 'button',
-        text: 'Удалить',
+        text: 'Удалить/Редактировать',
       },
     ]);
     const table = createTable();
@@ -219,8 +220,10 @@ const data = [
       list: table.tbody,
       logo,
       btnAdd: buttonGroup.btns[0],
+      btnDel: buttonGroup.btns[1],
       formOverlay: form.overlay,
       form: form.form,
+      table,
     };
   };
 
@@ -243,7 +246,12 @@ const data = [
 
     const tdPhone = document.createElement('td');
     const phoneLink = document.createElement('a');
-    // todo redact button SIMPLE
+
+    phoneLink.href = 'tel:' + phone;
+    phoneLink.textContent = phone;
+    tr.phoneLink = phoneLink;
+    tdPhone.append(phoneLink);
+
     const redactBtn = createButtonGroup([
       {
         className: 'btn btn-success ml-3 redact-btn',
@@ -251,12 +259,11 @@ const data = [
         text: 'редактировать',
       },
     ]);
-    phoneLink.href = 'tel:' + phone;
-    phoneLink.textContent = phone;
-    tr.phoneLink = phoneLink;
-    tdPhone.append(phoneLink, ...redactBtn.btns);
+    const tdRedact = document.createElement('td');
+    tdRedact.classList.add('delete');
+    tdRedact.append(...redactBtn.btns);
 
-    tr.append(tdDel, tdName, tdSurname, tdPhone);
+    tr.append(tdDel, tdName, tdSurname, tdPhone, tdRedact);
 
     return tr;
   };
@@ -284,56 +291,56 @@ const data = [
     return ;
   };
 
-  // * working lesson05 TEMP
-  const bubblingCapturing = () => {
-    const btnAdd = document.querySelector('.js-add');
-    const btnDel = document.querySelector('.js-del');
-    const btnWrapper = document.querySelector('.btn-wrapper');
-    const main = document.querySelector('main');
-    const app = document.querySelector('#app');
-    const body = document.querySelector('body');
+  // // * working lesson05 TEMP
+  // const bubblingCapturing = () => {
+  //   const btnAdd = document.querySelector('.js-add');
+  //   const btnDel = document.querySelector('.js-del');
+  //   const btnWrapper = document.querySelector('.btn-wrapper');
+  //   const main = document.querySelector('main');
+  //   const app = document.querySelector('#app');
+  //   const body = document.querySelector('body');
 
-    // const containersAll = document.querySelectorAll('.container');
-    document.querySelectorAll('.container').forEach( (container, i) => {
-      container.addEventListener('click', e => {
-        console.log(e.target.closest('.container'), 'container numb: ' + i);
-      });
-    })
+  //   // const containersAll = document.querySelectorAll('.container');
+  //   document.querySelectorAll('.container').forEach( (container, i) => {
+  //     container.addEventListener('click', e => {
+  //       console.log(e.target.closest('.container'), 'container numb: ' + i);
+  //     });
+  //   })
     
     
-    btnAdd.addEventListener('click', (e) => {
-      console.log('add');
-    }, false);
-    // * false default в обработчике - значит событие срабатывает на всплытие
-    // * true - на погружение
-    btnDel.addEventListener('click', (e) => {
-      console.log('del');
-    }, false);
-    btnWrapper.addEventListener('click', (e) => {
-      console.log('btnWrapper');
-    }, false);
-    main.addEventListener('click', (e) => {
-      console.log('main');
-    }, false);
-    app.addEventListener('click', (e) => {
-      console.log('app');
-    }, false);
-    body.addEventListener('click', (e) => {
-      console.log('body');
-    }, false);
+  //   btnAdd.addEventListener('click', (e) => {
+  //     console.log('add');
+  //   }, false);
+  //   // * false default в обработчике - значит событие срабатывает на всплытие
+  //   // * true - на погружение
+  //   btnDel.addEventListener('click', (e) => {
+  //     console.log('del');
+  //   }, false);
+  //   btnWrapper.addEventListener('click', (e) => {
+  //     console.log('btnWrapper');
+  //   }, false);
+  //   main.addEventListener('click', (e) => {
+  //     console.log('main');
+  //   }, false);
+  //   app.addEventListener('click', (e) => {
+  //     console.log('app');
+  //   }, false);
+  //   body.addEventListener('click', (e) => {
+  //     console.log('body');
+  //   }, false);
 
-    window.addEventListener('click', (e) => {
-      console.log('window');
-    });
-    document.addEventListener('click', (e) => {
-      console.log('document');
-    });
-    document.documentElement.addEventListener('click', (e) => {
-      console.log('html documentElement');
-    });
+  //   window.addEventListener('click', (e) => {
+  //     console.log('window');
+  //   });
+  //   document.addEventListener('click', (e) => {
+  //     console.log('document');
+  //   });
+  //   document.documentElement.addEventListener('click', (e) => {
+  //     console.log('html documentElement');
+  //   });
 
-    return ;
-  }
+  //   return ;
+  // }
 
 
   const init = (selectorApp, title) => {
@@ -341,73 +348,46 @@ const data = [
     const phonebook = renderPhonebook(app, title);
 
     // деструктуризируем переменные из объекта
-    const {list, logo, btnAdd, formOverlay, form} = phonebook;
+    const {list, logo, btnAdd, btnDel, formOverlay, form, table} = phonebook;
 
     // todo функционал here
     // без хеша
-    console.log('data: ', data);
-    
-
+    console.log('data: ', JSON.stringify(data));
     // добавляем id в массив к каждому объкту используем hash
     data.forEach((obj, index) => {
-      console.log('obj: ', obj);
-      let res = '';
+      let str = '';
       for (const key in obj) {
-        res += '' + obj[key];
+        str += '' + obj[key];
       }
-      obj.index = res;
-      obj.hash = 'hash' + hashCode('' + obj.index);
+      obj.id = 'hash' + hashCode(str);
     });
-    
     console.log('data: ', data);
-
-
-    // // test hash
-    // (() => {
-    //   for (let i = 65; i <= 80; i++) {
-    //     let ch = String.fromCharCode(i);
-    //     ch = 'b' + ch + 'a'
-    //     let hash = '0' + hashCode(ch);
-    //     console.log(`${i} -> '${ch}' --> ${hash}`);
-    //   }
-    // })();
-
-
 
 
     const allRow = renderContacts(list, data);
-
     hoverRow(allRow, logo);
-
-
 
     const objEvent = {
       handleEvent(event) {
-        // просто пример
+        const target = event.target;
         // здесь делаем видимым оверлай и модалку
-        formOverlay.classList.add('is-visible');
+        if (target === btnAdd) {
+          formOverlay.classList.add('is-visible');
+        } else if (target === btnDel) {
+          const cellDeleteAll = table.querySelectorAll('.delete');
+          cellDeleteAll.forEach(cellDelete => {
+            cellDelete.classList.add('is-visible');
+          });
+        }
+        console.log('target', event.target);
       },
     };
 
-    // handleEvent obj
     btnAdd.addEventListener('click', objEvent);
+    btnDel.addEventListener('click', objEvent);
     
-    // // simple click event 
-    // btnAdd.addEventListener('click', () => {
-    //   formOverlay.classList.add('is-visible');
-    // });
-
-    // // * блокируем всплытие события
-    // form.addEventListener('click', event => {
-    //   event.stopImmediatePropagation();
-    //   // event.stopPropagation();
-    // })
-
+    // при клике на оверлай скрывем модалку
     formOverlay.addEventListener('click', (event) => {
-      // при клике на оверлай скрывем модалку
-      // if (event.target === formOverlay) {
-      //   formOverlay.classList.remove('is-visible');
-      // };
 
       // отрабатываем клик по кнокпе close
       if (event.target === form.querySelector('.close')) {
@@ -421,8 +401,10 @@ const data = [
       }
       
       formOverlay.classList.remove('is-visible');
+    });
+
+
       
-    })
   };
 
 
