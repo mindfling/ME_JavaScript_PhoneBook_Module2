@@ -11,14 +11,14 @@ body {
 }
 
 .logo {
-  font-size: 32px;
+  font-size: 28px;
   font-weight: bold;
   text-transform: uppercase;
 }
 
 @media (max-width: 720px) {
   .logo {
-    font-size: 20px;
+    font-size: 18px;
   }
 }
 
@@ -27,20 +27,35 @@ body {
 }
 
 .del-icon {
-  display: block;
-  width: 10px;
-  height: 10px;
+  display: inline-block;
+  width: 15px;
+  height: 15px;
   border: none;
   background-color: transparent;
   background-image: url("../img/del.svg");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+  margin: 0 5px 0 0;
+}
+
+.edit-icon {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: none;
+  background-color: transparent;
+  background-image: url("../img/edit.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin: 0 0 0 5px;
 }
 
 .delete.is-visible {
-  width: 10px;
+  width: 100px;
   display: table-cell;
+  text-align: center;
 }
 
 .btn-wrapper {
@@ -116,8 +131,16 @@ body {
 }
 
 .del-icon:hover,
+.edit-icon:hover,
 .close:hover {
   opacity: 0.7;
+  cursor: pointer;
+}
+
+.del-icon:active,
+.edit-icon:active {
+  outline: none;
+  opacity: 1;
 }
 
 .footer {

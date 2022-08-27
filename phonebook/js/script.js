@@ -4,27 +4,22 @@ const data = [
   {
     name: 'Иван',
     surname: 'Петров',
-    phone: '+79514545454',
+    phone: '8(951)4545454',
   },
   {
     name: 'Игорь',
     surname: 'Семёнов',
-    phone: '+79999999999',
+    phone: '8(999)9999999',
   },
   {
     name: 'Семён',
     surname: 'Иванов',
-    phone: '+79800252525',
+    phone: '8(980)0252525',
   },
   {
     name: 'Мария',
     surname: 'Попова',
-    phone: '+79876543210',
-  },
-  {
-    name: 'Dmitry',
-    surname: 'Vasylivi4',
-    phone: '+79001234567',
+    phone: '8(987)6543210',
   },
 ];
 
@@ -114,7 +109,6 @@ const data = [
         <th>Имя</th>
         <th>Фамилия</th>
         <th>Телефон</th>
-        <th class="delete">Редактировать</th>
       </tr>
     `);
 
@@ -154,7 +148,7 @@ const data = [
       </div>
     `);
 
-    const buttonGroup = createButtonGroup([
+    const buttonGroupForm = createButtonGroup([
       {
         className: 'btn btn-primary mr-3',
         type: 'submit',
@@ -163,12 +157,11 @@ const data = [
       {
         className: 'btn btn-danger',
         type: 'reset',
-        text: 'Отмена',
+        text: 'Очистить',
       },
     ]);
 
-    form.append(...buttonGroup.btns);
-
+    form.append(...buttonGroupForm.btns);
     overlay.append(form);
 
     return {
@@ -193,16 +186,18 @@ const data = [
     const header = createHeader();
     const logo = createLogo(title);
     const main = createMain();
-    const buttonGroup = createButtonGroup([
+    const buttonGroupMenu = createButtonGroup([
       {
         className: 'btn btn-primary mr-3 js-add',
         type: 'button',
         text: 'Добавить',
+        title: 'Добавить новыый контакт',
       },
       {
         className: 'btn btn-danger js-del',
         type: 'button',
         text: 'Удалить/Редактировать',
+        title: 'Редактировать существующий контакт',
       },
     ]);
     const table = createTable();
@@ -210,17 +205,16 @@ const data = [
     const footer = createFooter();
 
     header.headerContainer.append(logo);
-    main.mainContainer.append(buttonGroup.btnWrapper, table, form.overlay);
+    main.mainContainer.append(buttonGroupMenu.btnWrapper, table, form.overlay);
     // footer.footerContainer.innerHTML = 'Все права защищены &copy; Автор';
     footer.footerContainer.innerHTML = 'Все права защищены &copy; ' + title;
-
     app.append(header, main, footer);
 
     return {
       list: table.tbody,
       logo,
-      btnAdd: buttonGroup.btns[0],
-      btnDel: buttonGroup.btns[1],
+      btnAdd: buttonGroupMenu.btns[0],
+      btnDel: buttonGroupMenu.btns[1],
       formOverlay: form.overlay,
       form: form.form,
       table,
@@ -229,14 +223,21 @@ const data = [
 
   const createRow = ({name: firstname, surname, phone}) => {
     const tr = document.createElement('tr');
-    tr.title = firstname + surname + phone;
+    tr.classList.add('trRow');
+    // * добавляем hash код для id контакта
     tr.id = 'id' + hashCode(firstname + surname + phone);
+    tr.title = firstname + surname + phone;
 
     const tdDel = document.createElement('td');
     tdDel.classList.add('delete');
     const buttonDel = document.createElement('button');
     buttonDel.classList.add('del-icon');
-    tdDel.append(buttonDel);
+    buttonDel.title = 'Удалить этот контакт';
+    const buttonRedact = document.createElement('button');
+    buttonRedact.classList.add('edit-icon');
+    buttonRedact.title = 'Редактировать этот контакт';
+    // tdDel.style.display = 'flex';
+    tdDel.append(buttonDel, buttonRedact);
 
     const tdName = document.createElement('td');
     tdName.textContent = firstname;
@@ -252,18 +253,19 @@ const data = [
     tr.phoneLink = phoneLink;
     tdPhone.append(phoneLink);
 
-    const redactBtn = createButtonGroup([
-      {
-        className: 'btn btn-success ml-3 redact-btn',
-        type: 'button',
-        text: 'редактировать',
-      },
-    ]);
-    const tdRedact = document.createElement('td');
-    tdRedact.classList.add('delete');
-    tdRedact.append(...redactBtn.btns);
+    // const redactBtn = createButtonGroup([
+    //   {
+    //     className: 'btn btn-success ml-3 redact-btn',
+    //     type: 'button',
+    //     text: 'редактировать',
+    //   },
+    // ]);
+    // const tdRedact = document.createElement('td');
+    // tdRedact.classList.add('delete');
+    // tdRedact.append(...redactBtn.btns);
 
-    tr.append(tdDel, tdName, tdSurname, tdPhone, tdRedact);
+    // tr.append(tdDel, tdName, tdSurname, tdPhone, tdRedact);
+    tr.append(tdDel, tdName, tdSurname, tdPhone);
 
     return tr;
   };
@@ -281,8 +283,8 @@ const data = [
     const text = logo.textContent;
 
     allRow.forEach(contact => {
-      contact.addEventListener('mouseenter', () => {
-        logo.textContent = contact.phoneLink?.textContent;
+      contact.addEventListener('mouseenter', (e) => {
+        logo.textContent = 'Номер ' + contact.phoneLink?.textContent;
       });
       contact.addEventListener('mouseleave', () => {
         logo.textContent = text;
@@ -349,10 +351,10 @@ const data = [
 
     // деструктуризируем переменные из объекта
     const {list, logo, btnAdd, btnDel, formOverlay, form, table} = phonebook;
-
-    // todo функционал here
+    
     // без хеша
     console.log('data: ', JSON.stringify(data));
+    // todo функционал here createHashData
     // добавляем id в массив к каждому объкту используем hash
     data.forEach((obj, index) => {
       let str = '';
@@ -376,37 +378,52 @@ const data = [
         } else if (target === btnDel) {
           const cellDeleteAll = table.querySelectorAll('.delete');
           cellDeleteAll.forEach(cellDelete => {
-            cellDelete.classList.add('is-visible');
+            cellDelete.classList.toggle('is-visible');
           });
         }
-        console.log('target', event.target);
+        // console.log('target', event.target);
       },
     };
 
     btnAdd.addEventListener('click', objEvent);
     btnDel.addEventListener('click', objEvent);
-    
-    // при клике на оверлай скрывем модалку
-    formOverlay.addEventListener('click', (event) => {
 
+
+    list.addEventListener('click', e => {
+      const target = e.target;
+      // удалить ближайший ряд
+      if (target.classList.contains('del-icon')) {
+        const closestRow = target.closest('.trRow');
+        console.log('Удалить', closestRow);
+        closestRow.remove();
+        return;
+      }
+      // редактировать ряд
+      if (target.classList.contains('edit-icon')) {
+        console.log('Редактировать', target);
+        return;
+      }
+      console.log(target);
+    });
+    
+    // * при клике на оверлай скрывем модалку
+    formOverlay.addEventListener('click', (event) => {
       // отрабатываем клик по кнокпе close
-      if (event.target === form.querySelector('.close')) {
+      // if (event.target === form.querySelector('.close')) {
+      //   formOverlay.classList.remove('is-visible');
+      //   return;
+      // }
+      if (event.target.closest('.close')) {
         formOverlay.classList.remove('is-visible');
         return;
       }
-      
       // блокируем клик по самой форме
       if (event.target.closest('.form')) {
         return;
       }
-      
       formOverlay.classList.remove('is-visible');
     });
-
-
-      
   };
-
 
   window.phonebookInit = init;
 }
