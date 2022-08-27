@@ -55,12 +55,9 @@ const data = [
   const createHeader = () => {
     const header = document.createElement('header');
     header.classList.add('header');
-
     const headerContainer = createContainer();
     header.append(headerContainer);
-
     header.headerContainer = headerContainer;
-
     return header;
   };
 
@@ -68,17 +65,14 @@ const data = [
     const h1 = document.createElement('h1');
     h1.classList.add('logo');
     h1.textContent = `Телефонный справочник. ${title}`;
-
     return h1;
   };
 
   const createMain = () => {
     const main = document.createElement('main');
-
     const mainContainer = createContainer();
     main.append(mainContainer);
     main.mainContainer = mainContainer;
-
     return main;
   };
 
@@ -94,7 +88,6 @@ const data = [
       // button.classList.add(className);
       return button;
     });
-
     btnWrapper.append(...btns);
 
     return {
@@ -117,14 +110,10 @@ const data = [
         <th class="delete">Редактировать</th>
       </tr>
     `);
-
     const tbody = document.createElement('tbody');
-
     table.append(thead, tbody);
-
     table.thead = thead;
     table.tbody = tbody;
-
     return table;
   };
 
@@ -166,11 +155,8 @@ const data = [
         text: 'Отмена',
       },
     ]);
-
     form.append(...buttonGroup.btns);
-
     overlay.append(form);
-
     return {
       overlay,
       form,
@@ -180,12 +166,10 @@ const data = [
   const createFooter = () => {
     const footer = document.createElement('footer');
     footer.classList.add('footer');
-
     const footerContainer = createContainer();
     footer.append(footerContainer);
     footer.footerContainer = footerContainer;
     footerContainer.textContent = 'Футер копирайт';
-
     return footer;
   };
 
@@ -213,9 +197,7 @@ const data = [
     main.mainContainer.append(buttonGroup.btnWrapper, table, form.overlay);
     // footer.footerContainer.innerHTML = 'Все права защищены &copy; Автор';
     footer.footerContainer.innerHTML = 'Все права защищены &copy; ' + title;
-
     app.append(header, main, footer);
-
     return {
       list: table.tbody,
       logo,
@@ -254,7 +236,7 @@ const data = [
 
     const redactBtn = createButtonGroup([
       {
-        className: 'btn btn-success ml-3 redact-btn',
+        className: 'btn btn-outline-danger btn-sm redact-btn',
         type: 'button',
         text: 'редактировать',
       },
@@ -262,15 +244,13 @@ const data = [
     const tdRedact = document.createElement('td');
     tdRedact.classList.add('delete');
     tdRedact.append(...redactBtn.btns);
-
     tr.append(tdDel, tdName, tdSurname, tdPhone, tdRedact);
-
     return tr;
   };
 
   const renderContacts = (list, data) => {
     const allRows = data.map(createRow);
-    // console.log('allRows renderContacts: ', allRows);
+    // * добавляем все ряды
     list.append(...allRows);
     return allRows;
   };
@@ -351,8 +331,6 @@ const data = [
     const {list, logo, btnAdd, btnDel, formOverlay, form, table} = phonebook;
 
     // todo функционал here
-    // без хеша
-    console.log('data: ', JSON.stringify(data));
     // добавляем id в массив к каждому объкту используем hash
     data.forEach((obj, index) => {
       let str = '';
@@ -361,8 +339,6 @@ const data = [
       }
       obj.id = 'hash' + hashCode(str);
     });
-    console.log('data: ', data);
-
 
     const allRow = renderContacts(list, data);
     hoverRow(allRow, logo);
@@ -376,10 +352,9 @@ const data = [
         } else if (target === btnDel) {
           const cellDeleteAll = table.querySelectorAll('.delete');
           cellDeleteAll.forEach(cellDelete => {
-            cellDelete.classList.add('is-visible');
+            cellDelete.classList.toggle('is-visible');
           });
         }
-        console.log('target', event.target);
       },
     };
 
@@ -388,25 +363,18 @@ const data = [
     
     // при клике на оверлай скрывем модалку
     formOverlay.addEventListener('click', (event) => {
-
       // отрабатываем клик по кнокпе close
       if (event.target === form.querySelector('.close')) {
         formOverlay.classList.remove('is-visible');
         return;
       }
-      
       // блокируем клик по самой форме
       if (event.target.closest('.form')) {
         return;
       }
-      
       formOverlay.classList.remove('is-visible');
     });
-
-
-      
   };
-
 
   window.phonebookInit = init;
 }
