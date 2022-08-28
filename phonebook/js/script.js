@@ -1,34 +1,47 @@
 'use strict';
 
-const data = [
-  {
-    name: 'Иван',
-    surname: 'Петров',
-    phone: '+79514545454',
-  },
-  {
-    name: 'Игорь',
-    surname: 'Семёнов',
-    phone: '+79999999999',
-  },
-  {
-    name: 'Семён',
-    surname: 'Иванов',
-    phone: '+79800252525',
-  },
-  {
-    name: 'Мария',
-    surname: 'Попова',
-    phone: '+79876543210',
-  },
-  {
-    name: 'Dmitry',
-    surname: 'Vasylivi4',
-    phone: '+79001234567',
-  },
-];
 
-{
+  const dataOrigin = [
+    {
+      name: 'Иван',
+      surname: 'Петров',
+      phone: '+79514545454',
+    },
+    {
+      name: 'Игорь',
+      surname: 'Семёнов',
+      phone: '+79999999999',
+    },
+    {
+      name: 'Семён',
+      surname: 'Иванов',
+      phone: '+79800252525',
+    },
+    {
+      name: 'Мария',
+      surname: 'Попова',
+      phone: '+79876543210',
+    },
+    {
+      name: 'Dmitry',
+      surname: 'Vasylivi4',
+      phone: '+79001234567',
+    },
+  ];
+
+  let data = JSON.parse(JSON.stringify(dataOrigin));
+  
+  // добавляем в массив объектов хэш
+  data = data.map((obj, index) => {
+    let str = index.toString() + Object.values(obj).reduce((accum, curr) => (accum + curr), '');
+    obj.id = 'id' + hashCode(str);
+    obj.title = str;
+    return obj;
+  });
+  
+  // console.log('dataOrigin: ', dataOrigin);
+  // console.log('data: ', data);
+
 /** 
  * * используем hash функцию для генерации id контактов
  * Returns a hash code from a string
@@ -44,7 +57,10 @@ const data = [
         hash |= 0; // Convert to 32bit integer
     }
     return Math.abs(hash);
-  }  
+  }
+
+// todo
+{
 
   const createContainer = () => {
     const container = document.createElement('div');
@@ -209,10 +225,13 @@ const data = [
     };
   };
 
-  const createRow = ({name: firstname, surname, phone}) => {
+  const createRow = ({name: firstname, surname, phone, id, title}) => {
     const tr = document.createElement('tr');
-    tr.title = firstname + surname + phone;
-    tr.id = 'id' + hashCode(firstname + surname + phone);
+    tr.classList.add('tdRow');
+    // tr.id = 'id' + hashCode(firstname + surname + phone);
+    // tr.title = firstname + surname + phone;
+    tr.id = id;
+    tr.title = title;
 
     const tdDel = document.createElement('td');
     tdDel.classList.add('delete');
@@ -271,57 +290,6 @@ const data = [
     return ;
   };
 
-  // // * working lesson05 TEMP
-  // const bubblingCapturing = () => {
-  //   const btnAdd = document.querySelector('.js-add');
-  //   const btnDel = document.querySelector('.js-del');
-  //   const btnWrapper = document.querySelector('.btn-wrapper');
-  //   const main = document.querySelector('main');
-  //   const app = document.querySelector('#app');
-  //   const body = document.querySelector('body');
-
-  //   // const containersAll = document.querySelectorAll('.container');
-  //   document.querySelectorAll('.container').forEach( (container, i) => {
-  //     container.addEventListener('click', e => {
-  //       console.log(e.target.closest('.container'), 'container numb: ' + i);
-  //     });
-  //   })
-    
-    
-  //   btnAdd.addEventListener('click', (e) => {
-  //     console.log('add');
-  //   }, false);
-  //   // * false default в обработчике - значит событие срабатывает на всплытие
-  //   // * true - на погружение
-  //   btnDel.addEventListener('click', (e) => {
-  //     console.log('del');
-  //   }, false);
-  //   btnWrapper.addEventListener('click', (e) => {
-  //     console.log('btnWrapper');
-  //   }, false);
-  //   main.addEventListener('click', (e) => {
-  //     console.log('main');
-  //   }, false);
-  //   app.addEventListener('click', (e) => {
-  //     console.log('app');
-  //   }, false);
-  //   body.addEventListener('click', (e) => {
-  //     console.log('body');
-  //   }, false);
-
-  //   window.addEventListener('click', (e) => {
-  //     console.log('window');
-  //   });
-  //   document.addEventListener('click', (e) => {
-  //     console.log('document');
-  //   });
-  //   document.documentElement.addEventListener('click', (e) => {
-  //     console.log('html documentElement');
-  //   });
-
-  //   return ;
-  // }
-
 
   const init = (selectorApp, title) => {
     const app = document.querySelector(selectorApp);
@@ -332,13 +300,13 @@ const data = [
 
     // todo функционал here
     // добавляем id в массив к каждому объкту используем hash
-    data.forEach((obj, index) => {
-      let str = '';
-      for (const key in obj) {
-        str += '' + obj[key];
-      }
-      obj.id = 'hash' + hashCode(str);
-    });
+    // data.forEach((obj, index) => {
+    //   let str = '';
+    //   for (const key in obj) {
+    //     str += '' + obj[key];
+    //   }
+    //   obj.id = 'hash' + hashCode(str);
+    // });
 
     const allRow = renderContacts(list, data);
     hoverRow(allRow, logo);
@@ -373,6 +341,15 @@ const data = [
         return;
       }
       formOverlay.classList.remove('is-visible');
+    });
+
+    list.addEventListener('click', e => {
+      const trg = e.target;
+      if (trg.classList.contains('del-icon')) {
+        const trgRow = trg.closest('.tdRow');
+        console.log(trg.closest('.tdRow').id, trg, trgRow);
+        trgRow.remove();
+      }
     });
   };
 
