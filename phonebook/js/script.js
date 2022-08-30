@@ -1,35 +1,52 @@
 'use strict';
 
 
-  const dataOrigin = [
-    {
-      name: 'Иван',
-      surname: 'Петров',
-      phone: '+79514545454',
-    },
-    {
-      name: 'Игорь',
-      surname: 'Семёнов',
-      phone: '+79999999999',
-    },
-    {
-      name: 'Семён',
-      surname: 'Иванов',
-      phone: '+79800252525',
-    },
-    {
-      name: 'Мария',
-      surname: 'Попова',
-      phone: '+79876543210',
-    },
-    {
-      name: 'Dmitry',
-      surname: 'Vasylivi4',
-      phone: '+79001234567',
-    },
-  ];
+const dataOrigin = [
+  {
+    name: 'Иван',
+    surname: 'Петров',
+    phone: '+79514545454',
+  },
+  {
+    name: 'Игорь',
+    surname: 'Семёнов',
+    phone: '+79999999999',
+  },
+  {
+    name: 'Семён',
+    surname: 'Иванов',
+    phone: '+79800252525',
+  },
+  {
+    name: 'Мария',
+    surname: 'Попова',
+    phone: '+79876543210',
+  },
+  {
+    name: 'Dmitry',
+    surname: 'Vasylivi4',
+    phone: '+79001234567',
+  },
+];
 
-  let data = JSON.parse(JSON.stringify(dataOrigin));
+let data = JSON.parse(JSON.stringify(dataOrigin));
+
+const modData = 
+[
+  {
+    "name":"Иван",
+    "surname":"Петров",
+    "phone":"+79514545454",
+    "id":"id67492487",
+    "title":"0ИванПетров+79514545454"
+  },
+  /*
+  {"name":"Игорь","surname":"Семёнов","phone":"+79999999999","id":"id20614058","title":"1ИгорьСемёнов+79999999999"},
+  {"name":"Семён","surname":"Иванов","phone":"+79800252525","id":"id2126516655","title":"2СемёнИванов+79800252525"},
+  {"name":"Мария","surname":"Попова","phone":"+79876543210","id":"id758408749","title":"3МарияПопова+79876543210"},
+  {"name":"Dmitry","surname":"Vasylivi4","phone":"+79001234567","id":"id1150705461","title":"4DmitryVasylivi4+79001234567"},
+  */
+];
   
   // добавляем в массив объектов хэш
   data = data.map((obj, index) => {
@@ -39,8 +56,6 @@
     return obj;
   });
   
-  // console.log('dataOrigin: ', dataOrigin);
-  // console.log('data: ', data);
 
 /** 
  * * используем hash функцию для генерации id контактов
@@ -59,9 +74,8 @@
     return Math.abs(hash);
   }
 
-// todo
+  
 {
-
   const createContainer = () => {
     const container = document.createElement('div');
     container.classList.add('container');
@@ -100,12 +114,10 @@
       const button = document.createElement('button');
       button.type = type;
       button.textContent = text;
-      button.className = className;
-      // button.classList.add(className);
+      button.classList = className;
       return button;
     });
     btnWrapper.append(...btns);
-
     return {
       btnWrapper,
       btns,
@@ -123,7 +135,7 @@
         <th>Имя</th>
         <th>Фамилия</th>
         <th>Телефон</th>
-        <th class="delete">Редактировать</th>
+        <th class="redact">Редактировать</th>
       </tr>
     `);
     const tbody = document.createElement('tbody');
@@ -202,7 +214,7 @@
       {
         className: 'btn btn-danger js-del',
         type: 'button',
-        text: 'Удалить/Редактировать',
+        text: 'Удалить',
       },
     ]);
     const table = createTable();
@@ -228,10 +240,8 @@
   const createRow = ({name: firstname, surname, phone, id, title}) => {
     const tr = document.createElement('tr');
     tr.classList.add('tdRow');
-    // tr.id = 'id' + hashCode(firstname + surname + phone);
-    // tr.title = firstname + surname + phone;
     tr.id = id;
-    tr.title = title;
+    // tr.title = title;
 
     const tdDel = document.createElement('td');
     tdDel.classList.add('delete');
@@ -253,6 +263,7 @@
     tr.phoneLink = phoneLink;
     tdPhone.append(phoneLink);
 
+    const tdRedact = document.createElement('td');
     const redactBtn = createButtonGroup([
       {
         className: 'btn btn-outline-danger btn-sm redact-btn',
@@ -260,14 +271,14 @@
         text: 'редактировать',
       },
     ]);
-    const tdRedact = document.createElement('td');
-    tdRedact.classList.add('delete');
+    tdRedact.classList.add('redact');
     tdRedact.append(...redactBtn.btns);
     tr.append(tdDel, tdName, tdSurname, tdPhone, tdRedact);
     return tr;
   };
 
   const renderContacts = (list, data) => {
+    // генерируем массив рядов из массива данных data
     const allRows = data.map(createRow);
     // * добавляем все ряды
     list.append(...allRows);
@@ -298,15 +309,6 @@
     // деструктуризируем переменные из объекта
     const {list, logo, btnAdd, btnDel, formOverlay, form, table} = phonebook;
 
-    // todo функционал here
-    // добавляем id в массив к каждому объкту используем hash
-    // data.forEach((obj, index) => {
-    //   let str = '';
-    //   for (const key in obj) {
-    //     str += '' + obj[key];
-    //   }
-    //   obj.id = 'hash' + hashCode(str);
-    // });
 
     const allRow = renderContacts(list, data);
     hoverRow(allRow, logo);
@@ -328,6 +330,7 @@
 
     btnAdd.addEventListener('click', objEvent);
     btnDel.addEventListener('click', objEvent);
+
     
     // при клике на оверлай скрывем модалку
     formOverlay.addEventListener('click', (event) => {
@@ -343,12 +346,47 @@
       formOverlay.classList.remove('is-visible');
     });
 
+
+    list.addEventListener('click', e => {
+      const target = e.target;
+
+      if (target.classList.contains('redact-btn')) {
+        const targetRow = target.closest('.tdRow');
+        const dataID = targetRow?.id;
+        console.log('redact', targetRow.id);
+        // formOverlay.classList.add('is-visible'); // todo передачу данных в форму редакттирования
+
+        // todo HERE data обработку данных
+        data.forEach((contact, index, arr) => {
+          if (contact.id === dataID) {
+            console.log('here is: ', contact.title, 'at index: ', index);
+            console.log(data[index]);
+            data.splice(index, 1); // todo редактирование этого элем из массива
+          }
+          console.log(data);
+          list.innerHTML = '';
+          list.append(document.createElement('div'));
+          renderContacts(list, data);
+        })
+      }
+    })
+
+
     list.addEventListener('click', e => {
       const trg = e.target;
       if (trg.classList.contains('del-icon')) {
         const trgRow = trg.closest('.tdRow');
-        console.log(trg.closest('.tdRow').id, trg, trgRow);
+        const dataID = trgRow.id;
+        console.log('delete', dataID);
+        
         trgRow.remove();
+        // todo HERE data обработку данных
+        data.forEach((contact, index, arr) => {
+          if (contact.id === dataID) {
+            data.splice(index, 1); // todo удалить этот элем из массива
+          }
+          console.log(data);
+        });        
       }
     });
   };
