@@ -1,7 +1,23 @@
 'use strict';
 
+/** 
+ * * Returns a hash code from a string use it for hosh contocts
+ * @param  {String} str The string to hash.
+ * @return {Number}    A 32bit integer
+ * @see http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
+ */
+const hashCode = (str) => {
+  let hash = 0;
+  for (let i = 0, len = str.length; i < len; i++) {
+      let chr = str.charCodeAt(i);
+      hash = (hash << 5) - hash + chr;
+      hash |= 0; // Convert to 32bit integer
+  }
+  return Math.abs(hash);
+}
 
-const dataOrigin = [
+// * оригинальные данные
+const origin = [
   {
     name: 'Иван',
     surname: 'Петров',
@@ -27,61 +43,104 @@ const dataOrigin = [
     surname: 'Vasylivi4',
     phone: '+79001234567',
   },
-];
-
-let data = JSON.parse(JSON.stringify(dataOrigin));
-
-const modData = 
-[
   {
-    "name":"Иван",
-    "surname":"Петров",
-    "phone":"+79514545454",
-    "id":"id67492487",
-    "title":"0ИванПетров+79514545454"
+    name: 'Иван',
+    surname: 'Петров',
+    phone: '+79514545454',
   },
-  /*
-  {"name":"Игорь","surname":"Семёнов","phone":"+79999999999","id":"id20614058","title":"1ИгорьСемёнов+79999999999"},
-  {"name":"Семён","surname":"Иванов","phone":"+79800252525","id":"id2126516655","title":"2СемёнИванов+79800252525"},
-  {"name":"Мария","surname":"Попова","phone":"+79876543210","id":"id758408749","title":"3МарияПопова+79876543210"},
-  {"name":"Dmitry","surname":"Vasylivi4","phone":"+79001234567","id":"id1150705461","title":"4DmitryVasylivi4+79001234567"},
-  */
+  {
+    name: 'Иван',
+    surname: 'Петров',
+    phone: '+79514545454',
+    id: 'id67492487',
+    title: '0ИванПетров+79514545454',
+  },
+  {
+    name: 'Иван',
+    surname: 'Петров',
+    phone: '+79514545454',
+    id: 'id67492487',
+    title: 'title0ИванПетров+79514545454',
+  },
 ];
-  
-  // добавляем в массив объектов хэш
+
+// * копия данных
+let data = JSON.parse(JSON.stringify(origin));
+
+// * обработка хэшей добавляем в массив объектов хэш
   data = data.map((obj, index) => {
     let str = index.toString() + Object.values(obj).reduce((accum, curr) => (accum + curr), '');
     obj.id = 'id' + hashCode(str);
-    obj.title = str;
+    obj.title = 'title' + str;
     return obj;
   });
   
+// * пример данных после обработки хэшей
+const modData = [
+  {
+    name: 'Иван',
+    surname: 'Петров',
+    phone: '+79514545454',
+  },
+  {
+    name: 'Иван',
+    surname: 'Петров',
+    phone: '+79514545454',
+    id: 'id67492487',
+    title: '0ИванПетров+79514545454',
+  },
+  {
+    name: 'Иван',
+    surname: 'Петров',
+    phone: '+79514545454',
+    id: 'id67492487',
+    title: 'title0ИванПетров+79514545454',
+  },
+  {
+    /*
+    name: 'Игорь',
+    surname: 'Семёнов',
+    phone: '+79999999999',
+    id: 'id20614058',
+    title: '1ИгорьСемёнов+79999999999',
+  },
+  {
+    name: 'Семён',
+    surname: 'Иванов',
+    phone: '+79800252525',
+    id: 'id2126516655',
+    title: '2СемёнИванов+79800252525',
+  },
+  {
+    name: 'Мария',
+    surname: 'Попова',
+    phone: '+79876543210',
+    id: 'id758408749',
+    title: '3МарияПопова+79876543210',
+  },
+  {
+    name: 'Dmitry',
+    surname: 'Vasylivi4',
+    phone: '+79001234567',
+    id: 'id1150705461',
+    title: '4DmitryVasylivi4+79001234567',
+    */
+  },
+];
 
-/** 
- * * используем hash функцию для генерации id контактов
- * Returns a hash code from a string
- * @param  {String} str The string to hash.
- * @return {Number}    A 32bit integer
- * @see http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
- */
-  function hashCode(str) {
-    let hash = 0;
-    for (let i = 0, len = str.length; i < len; i++) {
-        let chr = str.charCodeAt(i);
-        hash = (hash << 5) - hash + chr;
-        hash |= 0; // Convert to 32bit integer
-    }
-    return Math.abs(hash);
-  }
 
-  
+
+// * наш модуль приложение
 {
+
+  // * createContainer
   const createContainer = () => {
     const container = document.createElement('div');
     container.classList.add('container');
     return container;
   };
 
+  // * createHeader
   const createHeader = () => {
     const header = document.createElement('header');
     header.classList.add('header');
@@ -91,6 +150,7 @@ const modData =
     return header;
   };
 
+  // * createLogo
   const createLogo = title => {
     const h1 = document.createElement('h1');
     h1.classList.add('logo');
@@ -98,6 +158,7 @@ const modData =
     return h1;
   };
 
+  // * createMain
   const createMain = () => {
     const main = document.createElement('main');
     const mainContainer = createContainer();
@@ -106,6 +167,7 @@ const modData =
     return main;
   };
 
+  // * createButtonGroup
   const createButtonGroup = params => {
     const btnWrapper = document.createElement('div');
     btnWrapper.classList.add('btn-wrapper');
@@ -124,6 +186,7 @@ const modData =
     };
   };
 
+  // * createTable
   const createTable = (data) => {
     const table = document.createElement('table');
     table.classList.add('table', 'table-striped');
@@ -145,45 +208,58 @@ const modData =
     return table;
   };
 
+  // todo ФОРМА
+  // * createForm
   const createForm = () => {
     const overlay = document.createElement('div');
     overlay.classList.add('form-overlay');
 
     const form = document.createElement('form');
     form.classList.add('form');
+    let formTitle = 'Редактировать контакт';
+    formTitle = 'Добавить контакт';
     form.insertAdjacentHTML('beforeend', `
-      <button class="close" type="button"></button>
-      <h2 class="form-title">Добавить Контакты</h2>
-      <div class="form-group">
-        <label class="form-lable" for="name">Имя</label>
-        <input class="form-input" name="name"
-            id="name" type="text" required>
+    <button class="close" type="button"></button>
+
+    <h2 class="form-title">${formTitle}</h2>
+  
+  
+    <div class="form-group row">
+      <!-- <label class="form-lable col-sm-4" for="name">Имя</label> -->
+      <div class="col-sm-8">
+        <input class="form-input" name="name" placeholder="Введите имя" id="name" type="text" required>
       </div>
-      <div class="form-group">
-        <label class="form-lable" for="surname">Фамилия</label>
-        <input class="form-input" name="surname"
-            id="surname" type="text" required>
+    </div>
+
+    <div class="form-group row">
+      <!-- <label class="form-lable col-sm-4" for="surname">Фамилия</label> -->
+      <div class="col-sm-8">
+        <input class="form-input" name="surname" placeholder="Введите фамилию" id="surname" type="text" required>
       </div>
-      <div class="form-group">
-        <label class="form-lable" for="phone">Телефон</label>
-        <input class="form-input" name="phone"
-            id="phone" type="text" required>
+    </div>
+
+    <div class="form-group row">
+      <!-- <label class="form-lable col-sm-4" for="phone">Телефон</label> -->
+      <div class="col-sm-8">
+        <input class="form-input" name="phone" placeholder="Номер телефона" id="phone" type="text" required>
       </div>
+    </div>
+
     `);
 
     const buttonGroup = createButtonGroup([
       {
-        className: 'btn btn-primary mr-3',
+        className: 'btn btn-primary col-sm-5 mr-2',
         type: 'submit',
         text: 'Добавить',
       },
       {
-        className: 'btn btn-danger',
+        className: 'btn btn-danger col-sm-5',
         type: 'reset',
-        text: 'Отмена',
+        text: 'Очистить',
       },
     ]);
-    form.append(...buttonGroup.btns);
+    form.append(buttonGroup.btnWrapper);
     overlay.append(form);
     return {
       overlay,
@@ -322,7 +398,8 @@ const modData =
         } else if (target === btnDel) {
           const cellDeleteAll = table.querySelectorAll('.delete');
           cellDeleteAll.forEach(cellDelete => {
-            cellDelete.classList.toggle('is-visible');
+            // cellDelete.classList.toggle('is-visible');
+            cellDelete.classList.add('is-visible');
           });
         }
       },
@@ -371,22 +448,23 @@ const modData =
       }
     })
 
-
+    // list = table.tbody
     list.addEventListener('click', e => {
       const trg = e.target;
       if (trg.classList.contains('del-icon')) {
         const trgRow = trg.closest('.tdRow');
+        // id контакта для удаления
         const dataID = trgRow.id;
-        console.log('delete', dataID);
-        
+        // удалить строку из DOM
         trgRow.remove();
-        // todo HERE data обработку данных
+        // todo удалить этот элем из массива
         data.forEach((contact, index, arr) => {
           if (contact.id === dataID) {
-            data.splice(index, 1); // todo удалить этот элем из массива
+            data.splice(index, 1);
           }
-          console.log(data);
         });        
+        // проверка данных в массве
+        console.log(data.length, JSON.stringify(data));
       }
     });
   };
