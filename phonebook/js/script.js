@@ -39,28 +39,11 @@ const origin = [
     phone: '+79876543210',
   },
   {
-    name: 'Dmitry',
-    surname: 'Vasylivi4',
-    phone: '+79001234567',
-  },
-  {
-    name: 'Иван',
-    surname: 'Петров',
-    phone: '+79514545454',
-  },
-  {
     name: 'Иван',
     surname: 'Петров',
     phone: '+79514545454',
     id: 'id67492487',
     title: '0ИванПетров+79514545454',
-  },
-  {
-    name: 'Иван',
-    surname: 'Петров',
-    phone: '+79514545454',
-    id: 'id67492487',
-    title: 'title0ИванПетров+79514545454',
   },
 ];
 
@@ -89,49 +72,29 @@ const modData = [
     id: 'id67492487',
     title: '0ИванПетров+79514545454',
   },
-  {
-    name: 'Иван',
-    surname: 'Петров',
-    phone: '+79514545454',
-    id: 'id67492487',
-    title: 'title0ИванПетров+79514545454',
-  },
-  {
-    /*
-    name: 'Игорь',
-    surname: 'Семёнов',
-    phone: '+79999999999',
-    id: 'id20614058',
-    title: '1ИгорьСемёнов+79999999999',
-  },
-  {
-    name: 'Семён',
-    surname: 'Иванов',
-    phone: '+79800252525',
-    id: 'id2126516655',
-    title: '2СемёнИванов+79800252525',
-  },
-  {
-    name: 'Мария',
-    surname: 'Попова',
-    phone: '+79876543210',
-    id: 'id758408749',
-    title: '3МарияПопова+79876543210',
-  },
-  {
-    name: 'Dmitry',
-    surname: 'Vasylivi4',
-    phone: '+79001234567',
-    id: 'id1150705461',
-    title: '4DmitryVasylivi4+79001234567',
-    */
-  },
 ];
-
 
 
 // * наш модуль приложение
 {
+  // функция создания элемента
+  // взята из интенсива
+  /** 
+   * * createElem
+   * todo функция взята из интенсива для создания елемента
+   * @param {String} tag тег элемента
+   * @param {Object} attr объект аттрибутов
+   * @param {String} title строка текстовое содержимое елемента
+   * @return {DOMElement} возвращает созданный елемент
+   */
+  const createElem = (tag, attr = {}, text) => {
+    const elem = document.createElement(tag);
+    Object.assign(elem, attr);
+    if (text) {
+      elem.textContent = text;
+    }
+    return elem;
+  };
 
   // * createContainer
   const createContainer = () => {
@@ -210,43 +173,38 @@ const modData = [
 
   // todo ФОРМА
   // * createForm
-  const createForm = () => {
+  const createForm = (title) => {
     const overlay = document.createElement('div');
     overlay.classList.add('form-overlay');
-
     const form = document.createElement('form');
     form.classList.add('form');
-    let formTitle = 'Редактировать контакт';
-    formTitle = 'Добавить контакт';
+    let formTitle = (title ? 'Редактировать контакт' : 'Добавить контакт');
     form.insertAdjacentHTML('beforeend', `
-    <button class="close" type="button"></button>
+      <button class="close" type="button"></button>
 
-    <h2 class="form-title">${formTitle}</h2>
-  
-  
-    <div class="form-group row">
-      <!-- <label class="form-lable col-sm-4" for="name">Имя</label> -->
-      <div class="col-sm-8">
-        <input class="form-input" name="name" placeholder="Введите имя" id="name" type="text" required>
+      <h2 class="form-title">${formTitle}</h2>
+      
+      <div class="form-group row">
+        <!-- <label class="form-lable col-sm-4" for="name">Имя</label> -->
+        <div class="col-sm-12">
+          <input class="form-input form-input-name form-control" 
+            name="name" placeholder="Введите имя" id="name" type="text" required>
+        </div>
       </div>
-    </div>
-
-    <div class="form-group row">
-      <!-- <label class="form-lable col-sm-4" for="surname">Фамилия</label> -->
-      <div class="col-sm-8">
-        <input class="form-input" name="surname" placeholder="Введите фамилию" id="surname" type="text" required>
+      
+      <div class="form-group row">
+        <!-- <label class="form-lable col-sm-4" for="surname">Фамилия</label> -->
+        <div class="col-sm-10">
+          <input class="form-input form-input-surname form-control" name="surname" placeholder="Введите фамилию" id="surname" type="text" required>
+        </div>
       </div>
-    </div>
-
-    <div class="form-group row">
-      <!-- <label class="form-lable col-sm-4" for="phone">Телефон</label> -->
-      <div class="col-sm-8">
-        <input class="form-input" name="phone" placeholder="Номер телефона" id="phone" type="text" required>
+      <div class="form-group row">
+        <!-- <label class="form-lable col-sm-4" for="phone">Телефон</label> -->
+        <div class="col-sm-8">
+          <input class="form-input form-input-phone form-control" name="phone" placeholder="Номер телефона" id="phone" type="text" required>
+        </div>
       </div>
-    </div>
-
     `);
-
     const buttonGroup = createButtonGroup([
       {
         className: 'btn btn-primary col-sm-5 mr-2',
@@ -261,12 +219,160 @@ const modData = [
     ]);
     form.append(buttonGroup.btnWrapper);
     overlay.append(form);
+    form.inputName = form.querySelector('.form-input-name');
+    form.inputSurname = form.querySelector('.form-input-surname');
+    form.inputPhone = form.querySelector('.form-input-phone');
+    // const formInputName = form.querySelector('.form-input-name');
+    // const formInputSurname = form.querySelector('.form-input-surname');
+    // const formInputPhone = form.querySelector('.form-input-phone');
     return {
       overlay,
       form,
+      inputName: form.inputName,
+      inputSurname: form.inputSurname,
+      inputPhone: form.inputPhone,
     };
   };
 
+  // * getDataContact
+  // получить контакт из массива data by id
+  const getDataContact = (id) => {
+    // filter фильтрует элементы выдает массив контактов с данным id
+    const contact = data.filter(contact => (contact.id === id));
+    console.log('contact: ', contact);
+    return contact[0];
+  }
+
+  /**
+   * todo своя функция динамически генерирует форму
+   * * createDynForm
+   * */ 
+  const createDynForm = (titleText, {dataid, firstname, surname, phone} = {}, ) => {
+    // обработка id контакта если id существует
+    if (dataid) {
+      const result = getDataContact(dataid);
+      firstname = result.name;
+      console.log('firstname: ', firstname);
+      surname = result.surname;
+      console.log('surname: ', surname);
+      phone = result.phone;
+      console.log('phone: ', phone);
+    }
+
+
+    // генерим оверлей
+    const overlay = createElem('div', {
+      className: 'form-overlay',
+    });
+    // генерируем форму
+    const form = createElem('form', {
+      className: 'form',
+    });
+    // заголовок формы, по умолчанию Добавить контакт
+    titleText = (titleText ? titleText : 'Добавить контакт');
+    const title = createElem('h2', {
+      className: 'form-title',
+    },
+    titleText);
+    // кнопка Закрыть форму
+    const closeBtn = createElem('button', {
+      className: 'close',
+      type: 'button',
+      title: "Закрыть форму",
+    });
+
+    // строка ввода имени
+    const formGroupName = createElem('div', {
+      className: 'form-group row',
+    });
+    const colName = createElem('div', {
+      className: 'col-sm-12',
+    });
+    const inputName = createElem('input', {
+      className: 'form-input form-input-name form-control',
+      name: 'name',
+      placeholder: 'Имя...',
+      id: 'name',
+      type: 'text',
+      required: 'true',
+      value: firstname ? firstname : '',
+    });
+    colName.append(inputName);
+    formGroupName.append(colName);
+
+    // строка ввода фамилии
+    const formGroupSurname = createElem('div', {
+      className: 'form-group row',
+    });
+    const colSurname = createElem('div', {
+      className: 'col-sm-10',
+    });
+    const inputSurname = createElem('input', {
+      className: 'form-input form-input-name form-control',
+      name: 'surname',
+      placeholder: 'Фамилия...',
+      id: 'surname',
+      type: 'text',
+      required: 'true',
+      value: surname ? surname : '',
+    });
+    colSurname.append(inputSurname);
+    formGroupSurname.append(colSurname);
+
+    // строка ввода телефона
+    const formGroupPhone = createElem('div', {
+      className: 'form-group row',
+    });
+    const colPhone = createElem('div', {
+      className: 'col-sm-8',
+    });
+    const inputPhone = createElem('input', {
+      className: 'form-input form-input-name form-control',
+      name: 'phone',
+      placeholder: 'Телефон...',
+      id: 'phone',
+      type: 'text',
+      required: 'true',
+      value: phone ? phone : '', // todo
+    });
+    colPhone.append(inputPhone);
+    formGroupPhone.append(colPhone);
+
+    const buttonGroupForm = createButtonGroup([
+      {
+        className: 'btn btn-outline-primary btn-sm mr-2',
+        type: 'submit',
+        text: 'Добавить',
+        title: 'Сохранить контакт в список',
+      },
+      {
+        className: 'btn btn-outline-danger btn-sm',
+        type: 'reset',
+        text: 'Очистить',
+        title: 'Очистить данные формы',
+      },
+    ]);
+
+    form.append(closeBtn, title, formGroupName, formGroupSurname, formGroupPhone, buttonGroupForm.btnWrapper,);
+
+    form.closeBtn = closeBtn;
+    form.formTitle = title;
+    form.inputName = inputName;
+    form.inputSurname = inputSurname;
+    form.inputPhone = inputPhone;
+    form.btnSubmit = buttonGroupForm.btns[0];
+    form.btnReset = buttonGroupForm.btns[1];
+    overlay.append(form);
+
+    return {
+      overlay,
+      title,
+      form,
+    };
+  }
+
+
+  // * createFooter
   const createFooter = () => {
     const footer = document.createElement('footer');
     footer.classList.add('footer');
@@ -277,6 +383,7 @@ const modData = [
     return footer;
   };
 
+  // * renderPhonebook
   const renderPhonebook = (app, title) => {
     const header = createHeader();
     const logo = createLogo(title);
@@ -286,38 +393,53 @@ const modData = [
         className: 'btn btn-primary mr-3 js-add',
         type: 'button',
         text: 'Добавить',
+        title: 'Открыть форму для добавления данных нового контакта'
       },
       {
         className: 'btn btn-danger js-del',
         type: 'button',
         text: 'Удалить',
+        title: 'Выбрать и удалить контакт',
       },
     ]);
     const table = createTable();
-    const form = createForm();
-    const footer = createFooter();
+    // // todo args
+    const form = createDynForm();
+    // const form = createDynForm(
+    //   'Редактируем этот',
+    //   {
+    //   firstname: 'ПервоеИмя',
+    //   surname: 'ВтороеИмя',
+    //   dataid: 'id20614058',
+    // },
+    // ); // todo
+
+    const footer = createFooter('');
 
     header.headerContainer.append(logo);
-    main.mainContainer.append(buttonGroup.btnWrapper, table, form.overlay);
-    // footer.footerContainer.innerHTML = 'Все права защищены &copy; Автор';
+    // main.mainContainer.append(buttonGroup.btnWrapper, table, form.overlay);
+    main.mainContainer.append(buttonGroup.btnWrapper, table);
+    main.append(form.overlay);
     footer.footerContainer.innerHTML = 'Все права защищены &copy; ' + title;
     app.append(header, main, footer);
+
     return {
-      list: table.tbody,
       logo,
+      table,
+      listTbody: table.tbody,
       btnAdd: buttonGroup.btns[0],
       btnDel: buttonGroup.btns[1],
       formOverlay: form.overlay,
       form: form.form,
-      table,
     };
   };
 
+  // * createRow
   const createRow = ({name: firstname, surname, phone, id, title}) => {
     const tr = document.createElement('tr');
     tr.classList.add('tdRow');
     tr.id = id;
-    // tr.title = title;
+    tr.title = title;
 
     const tdDel = document.createElement('td');
     tdDel.classList.add('delete');
@@ -353,6 +475,7 @@ const modData = [
     return tr;
   };
 
+  // * renderContacts
   const renderContacts = (list, data) => {
     // генерируем массив рядов из массива данных data
     const allRows = data.map(createRow);
@@ -378,60 +501,126 @@ const modData = [
   };
 
 
+  // * ! ЗАПУСК ПРИЛОЖНИЯ ЧЕРЕЗ init() !!!
   const init = (selectorApp, title) => {
     const app = document.querySelector(selectorApp);
     const phonebook = renderPhonebook(app, title);
 
     // деструктуризируем переменные из объекта
-    const {list, logo, btnAdd, btnDel, formOverlay, form, table} = phonebook;
+    const {listTbody, logo, btnAdd, btnDel, formOverlay, form, table} = phonebook;
+    // form.formTitle.textContent = 'Kh мой заголовок'; // todo
+    // console.log('renderPhonebook: form: ', form);
+    // console.log('form.formTitle: ', form.formTitle);
 
 
-    const allRow = renderContacts(list, data);
+    const allRow = renderContacts(listTbody, data);
     hoverRow(allRow, logo);
 
-    const objEvent = {
+    // обработчик событий кликов на
+    // * btnAdd и btnDel
+    const objEventBtns = {
       handleEvent(event) {
         const target = event.target;
-        // здесь делаем видимым оверлай и модалку
+
         if (target === btnAdd) {
+          // здесь делаем видимым оверлай и модалку
           formOverlay.classList.add('is-visible');
+
+          // здесь скрываем кнопки .delete
+          const cellDeleteAll = table.querySelectorAll('.delete');
+          cellDeleteAll.forEach(cellDelete => {
+            // cellDelete.classList.toggle('is-visible');
+            cellDelete.classList.remove('is-visible');
+          });
         } else if (target === btnDel) {
+          // здесь показываем все кнопки .delete
           const cellDeleteAll = table.querySelectorAll('.delete');
           cellDeleteAll.forEach(cellDelete => {
             // cellDelete.classList.toggle('is-visible');
             cellDelete.classList.add('is-visible');
           });
         }
+
       },
     };
 
-    btnAdd.addEventListener('click', objEvent);
-    btnDel.addEventListener('click', objEvent);
+    // кнопка Добавить
+    btnAdd.addEventListener('click', objEventBtns);
+    // кнопка Удалить
+    btnDel.addEventListener('click', objEventBtns);
 
     
     // при клике на оверлай скрывем модалку
+    console.log('form.closeBtn: ', form.closeBtn);
     formOverlay.addEventListener('click', (event) => {
-      // отрабатываем клик по кнокпе close
-      if (event.target === form.querySelector('.close')) {
+      const target = event.target;
+      // todo отрабатываем клик по кнокпе close
+      if (target === form.closeBtn) {
         formOverlay.classList.remove('is-visible');
         return;
       }
+      // if (event.target === form.querySelector('.close')) {
+      //   formOverlay.classList.remove('is-visible');
+      //   return;
+      // }
+
+      // * кнопка Submit
+      if (target === form.btnSubmit) {
+        event.preventDefault();
+        const contact = {
+          name: form.inputName.value,
+          surname: form.inputSurname.value,
+          phone: form.inputPhone.value,
+        };
+        // console.log('form.inputPhone: ', form.inputPhone);
+        // console.log('form.inputSurname: ', form.inputSurname);
+        // console.log('form.inputName: ', form.inputName);
+
+        // ** добавим новый контакт
+        {
+          contact.id = 'id' + hashCode(data.length.toString() + Object.values(contact).reduce((accum, curr) => (accum + curr), ''));
+          console.log('contact: ', contact);
+          data.push(contact);
+          // console.log(data);
+          // добавляем строку в таблицу
+          listTbody.append(createRow(contact));
+        }
+
+        // очистить форму 
+        form.inputName.value = '';
+        form.inputSurname.value = '';
+        form.inputPhone.value = '';
+        // закрываем форму
+        formOverlay.classList.remove('is-visible');
+        return;
+      }
+      
+      // * кнопка Reset
+      if (target === form.btnReset) {
+        // event.preventDefault();
+        console.log('Очистить');
+        // очистить форму вручную
+        // form.inputName.value = '';
+        // form.inputSurname.value = '';
+        // form.inputPhone.value = '';
+        return;
+      }
+
       // блокируем клик по самой форме
       if (event.target.closest('.form')) {
         return;
       }
-      formOverlay.classList.remove('is-visible');
+      formOverlay.classList.remove('is-visible'); // скрываем оверлей
     });
 
 
-    list.addEventListener('click', e => {
+    listTbody.addEventListener('click', e => {
       const target = e.target;
 
+      // обработка событий клик по кнопке Редактировать
       if (target.classList.contains('redact-btn')) {
         const targetRow = target.closest('.tdRow');
         const dataID = targetRow?.id;
-        console.log('redact', targetRow.id);
-        // formOverlay.classList.add('is-visible'); // todo передачу данных в форму редакттирования
 
         // todo HERE data обработку данных
         data.forEach((contact, index, arr) => {
@@ -440,31 +629,30 @@ const modData = [
             console.log(data[index]);
             data.splice(index, 1); // todo редактирование этого элем из массива
           }
-          console.log(data);
-          list.innerHTML = '';
-          list.append(document.createElement('div'));
-          renderContacts(list, data);
+          listTbody.innerHTML = '';
+          listTbody.append(document.createElement('div'));
+          renderContacts(listTbody, data);
         })
       }
     })
 
-    // list = table.tbody
-    list.addEventListener('click', e => {
+    // обработка событий клик по Удалить del-icon
+    listTbody.addEventListener('click', e => {
       const trg = e.target;
       if (trg.classList.contains('del-icon')) {
         const trgRow = trg.closest('.tdRow');
         // id контакта для удаления
         const dataID = trgRow.id;
-        // удалить строку из DOM
+        // ? удалить строку из DOM
         trgRow.remove();
-        // todo удалить этот элем из массива
+        // ? удалить этот элем из массива
         data.forEach((contact, index, arr) => {
           if (contact.id === dataID) {
             data.splice(index, 1);
           }
         });        
         // проверка данных в массве
-        console.log(data.length, JSON.stringify(data));
+        // console.log(data.length, JSON.stringify(data));
       }
     });
   };
