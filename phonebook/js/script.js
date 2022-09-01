@@ -46,9 +46,10 @@ const origin = [
     title: '0ИванПетров+79514545454',
   },
 ];
-
+console.log('origin: ', origin);
 // * копия данных
 let data = JSON.parse(JSON.stringify(origin));
+console.log('data: ', data);
 
 // * обработка хэшей добавляем в массив объектов хэш
   data = data.map((obj, index) => {
@@ -77,8 +78,6 @@ const modData = [
 
 // * наш модуль приложение
 {
-  // функция создания элемента
-  // взята из интенсива
   /** 
    * * createElem
    * todo функция взята из интенсива для создания елемента
@@ -135,11 +134,14 @@ const modData = [
     const btnWrapper = document.createElement('div');
     btnWrapper.classList.add('btn-wrapper');
 
-    const btns = params.map(({className, type, text}) => {
+    const btns = params.map(({className, type, text, title}) => {
       const button = document.createElement('button');
       button.type = type;
       button.textContent = text;
       button.classList = className;
+      if (title) {
+        button.title = title;
+      }
       return button;
     });
     btnWrapper.append(...btns);
@@ -171,8 +173,8 @@ const modData = [
     return table;
   };
 
-  // todo ФОРМА
-  // * createForm
+  /*
+  // * createForm Максим
   const createForm = (title) => {
     const overlay = document.createElement('div');
     overlay.classList.add('form-overlay');
@@ -233,6 +235,7 @@ const modData = [
       inputPhone: form.inputPhone,
     };
   };
+  */
 
   // * getDataContact
   // получить контакт из массива data by id
@@ -244,22 +247,17 @@ const modData = [
   }
 
   /**
+   * * createFormDyn
    * todo своя функция динамически генерирует форму
-   * * createDynForm
    * */ 
-  const createDynForm = (titleText, {dataid, firstname, surname, phone} = {}, ) => {
+  const createFormDyn = (titleText, {dataid, firstname, surname, phone} = {}, ) => {
     // обработка id контакта если id существует
     if (dataid) {
       const result = getDataContact(dataid);
       firstname = result.name;
-      console.log('firstname: ', firstname);
       surname = result.surname;
-      console.log('surname: ', surname);
       phone = result.phone;
-      console.log('phone: ', phone);
     }
-
-
     // генерим оверлей
     const overlay = createElem('div', {
       className: 'form-overlay',
@@ -393,7 +391,7 @@ const modData = [
         className: 'btn btn-primary mr-3 js-add',
         type: 'button',
         text: 'Добавить',
-        title: 'Открыть форму для добавления данных нового контакта'
+        title: 'Открыть форму для добавления данных нового контакта',
       },
       {
         className: 'btn btn-danger js-del',
@@ -403,16 +401,13 @@ const modData = [
       },
     ]);
     const table = createTable();
-    // // todo args
-    const form = createDynForm();
-    // const form = createDynForm(
+    const form = createFormDyn('Добавить',);
+    // const form = createFormDyn(
     //   'Редактируем этот',
     //   {
-    //   firstname: 'ПервоеИмя',
-    //   surname: 'ВтороеИмя',
-    //   dataid: 'id20614058',
-    // },
-    // ); // todo
+    //     dataid: 'id20614058',
+    //   },
+    // );
 
     const footer = createFooter('');
 
@@ -438,8 +433,8 @@ const modData = [
   const createRow = ({name: firstname, surname, phone, id, title}) => {
     const tr = document.createElement('tr');
     tr.classList.add('tdRow');
-    tr.id = id;
-    tr.title = title;
+    tr.id = id; // id ряда конткта для идентификации
+    tr.title = title; // title этого ряда для дебага
 
     const tdDel = document.createElement('td');
     tdDel.classList.add('delete');
@@ -467,6 +462,7 @@ const modData = [
         className: 'btn btn-outline-danger btn-sm redact-btn',
         type: 'button',
         text: 'редактировать',
+        title: `Редактировать контакт: ${firstname} ${surname} ${phone} `,
       },
     ]);
     tdRedact.classList.add('redact');
@@ -559,10 +555,6 @@ const modData = [
         formOverlay.classList.remove('is-visible');
         return;
       }
-      // if (event.target === form.querySelector('.close')) {
-      //   formOverlay.classList.remove('is-visible');
-      //   return;
-      // }
 
       // * кнопка Submit
       if (target === form.btnSubmit) {
@@ -572,19 +564,11 @@ const modData = [
           surname: form.inputSurname.value,
           phone: form.inputPhone.value,
         };
-        // console.log('form.inputPhone: ', form.inputPhone);
-        // console.log('form.inputSurname: ', form.inputSurname);
-        // console.log('form.inputName: ', form.inputName);
 
         // ** добавим новый контакт
-        {
-          contact.id = 'id' + hashCode(data.length.toString() + Object.values(contact).reduce((accum, curr) => (accum + curr), ''));
-          console.log('contact: ', contact);
-          data.push(contact);
-          // console.log(data);
-          // добавляем строку в таблицу
-          listTbody.append(createRow(contact));
-        }
+        contact.id = 'id' + hashCode(data.length.toString() + Object.values(contact).reduce((accum, curr) => (accum + curr), ''));
+        data.push(contact);
+        listTbody.append(createRow(contact));
 
         // очистить форму 
         form.inputName.value = '';
@@ -597,9 +581,10 @@ const modData = [
       
       // * кнопка Reset
       if (target === form.btnReset) {
-        // event.preventDefault();
-        console.log('Очистить');
+        // отключить действие поумолчанию при нажатии на клавшу reset формы
+        event.preventDefault();
         // очистить форму вручную
+        console.log('Очистить');
         // form.inputName.value = '';
         // form.inputSurname.value = '';
         // form.inputPhone.value = '';
