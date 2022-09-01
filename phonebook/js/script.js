@@ -38,13 +38,6 @@ const origin = [
     surname: 'Попова',
     phone: '+79876543210',
   },
-  {
-    name: 'Иван',
-    surname: 'Петров',
-    phone: '+79514545454',
-    id: 'id67492487',
-    title: '0ИванПетров+79514545454',
-  },
 ];
 console.log('origin: ', origin);
 // * копия данных
@@ -59,22 +52,6 @@ console.log('data: ', data);
     return obj;
   });
   
-// * пример данных после обработки хэшей
-const modData = [
-  {
-    name: 'Иван',
-    surname: 'Петров',
-    phone: '+79514545454',
-  },
-  {
-    name: 'Иван',
-    surname: 'Петров',
-    phone: '+79514545454',
-    id: 'id67492487',
-    title: '0ИванПетров+79514545454',
-  },
-];
-
 
 // * наш модуль приложение
 {
@@ -242,9 +219,20 @@ const modData = [
   const getDataContact = (id) => {
     // filter фильтрует элементы выдает массив контактов с данным id
     const contact = data.filter(contact => (contact.id === id));
-    console.log('contact: ', contact);
+    // console.log('contact: ', contact);
     return contact[0];
-  }
+  };
+
+
+  // * deteleDataContact
+  const deteleDataContact = (id) => {
+    // удалить этот элем из массива
+    data.forEach((contact, index, arr) => {
+      if (contact.id === id) {
+        data.splice(index, 1);
+      };
+    });
+  };
 
   /**
    * * createFormDyn
@@ -258,6 +246,12 @@ const modData = [
       surname = result.surname;
       phone = result.phone;
     }
+
+    // проверка на пустые поля
+    firstname = firstname ? firstname : '';
+    surname = surname ? surname : '';
+    phone = phone ? phone : '';
+
     // генерим оверлей
     const overlay = createElem('div', {
       className: 'form-overlay',
@@ -607,17 +601,18 @@ const modData = [
         const targetRow = target.closest('.tdRow');
         const dataID = targetRow?.id;
 
-        // todo HERE data обработку данных
         data.forEach((contact, index, arr) => {
           if (contact.id === dataID) {
             console.log('here is: ', contact.title, 'at index: ', index);
             console.log(data[index]);
-            data.splice(index, 1); // todo редактирование этого элем из массива
+            data.splice(index, 1);
+            // todo редактирование этого элем из массива
           }
           listTbody.innerHTML = '';
           listTbody.append(document.createElement('div'));
           renderContacts(listTbody, data);
-        })
+        });
+
       }
     })
 
@@ -626,18 +621,13 @@ const modData = [
       const trg = e.target;
       if (trg.classList.contains('del-icon')) {
         const trgRow = trg.closest('.tdRow');
-        // id контакта для удаления
         const dataID = trgRow.id;
-        // ? удалить строку из DOM
+        // удалить этот элем из массива
+        deteleDataContact(dataID);
+        // удалить строку из DOM
         trgRow.remove();
-        // ? удалить этот элем из массива
-        data.forEach((contact, index, arr) => {
-          if (contact.id === dataID) {
-            data.splice(index, 1);
-          }
-        });        
         // проверка данных в массве
-        // console.log(data.length, JSON.stringify(data));
+        console.log(data.length, JSON.stringify(data));
       }
     });
   };
