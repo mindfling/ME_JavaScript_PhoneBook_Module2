@@ -1,6 +1,6 @@
 'use strict';
 
-const data = [
+const origin = [
   {
     name: 'Иван',
     surname: 'Петров',
@@ -29,6 +29,45 @@ const data = [
 ];
 
 {
+  let data = [];
+  /**
+ * * Returns a hash code from a string use it for hosh contocts
+ * @param  {String} str The string to hash.
+ * @return {Number}    A 32bit integer
+ * @see http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
+ */
+  const hashCode = (str) => {
+    let hash = 0;
+    for (let i = 0, len = str.length; i < len; i++) {
+      const chr = str.charCodeAt(i);
+      hash = (hash << 5) - hash + chr;
+      hash |= 0; // Convert to 32bit integer
+    }
+    return Math.abs(hash);
+  };
+
+
+  // * getDataContact
+  // получить контакт из массива data by id
+  const getDataContact = (id) => {
+    // filter фильтрует элементы выдает массив контактов с данным id
+    const contact = data.filter(contact => (contact.id === id));
+    // console.log('contact: ', contact);
+    return contact[0];
+  };
+
+
+  // * deteleDataContact
+  const deteleDataContact = (id) => {
+    // удалить этот элем из массива
+    data.forEach((contact, index, arr) => {
+      if (contact.id === id) {
+        data.splice(index, 1);
+      }
+    });
+  };
+
+
   const createContainer = () => {
     const container = document.createElement('div');
     container.classList.add('container');
@@ -209,8 +248,11 @@ const data = [
     };
   };
 
-  const createRow = ({name: firstname, surname, phone}) => {
+  const createRow = ({name: firstname, surname, phone, id}) => {
     const tr = document.createElement('tr');
+    tr.id = id; // id ряда конткта для идентификации
+    tr.classList.add('tdRow');
+    tr.title = `Контакт ${surname} ${firstname}`;
 
     const tdDel = document.createElement('td');
     tdDel.classList.add('delete');
@@ -231,14 +273,12 @@ const data = [
     tr.phoneLink = phoneLink;
     tdPhone.append(phoneLink);
 
-    tr.title = `Контакт ${surname} ${firstname}`;
     tr.append(tdDel, tdName, tdSurname, tdPhone);
     return tr;
   };
 
   const renderContacts = (list, data) => {
     const allRows = data.map(createRow);
-    console.log('allRows renderContacts: ', allRows);
     list.append(...allRows);
     return allRows;
   };
@@ -261,6 +301,15 @@ const data = [
   const init = (selectorApp, title) => {
     const app = document.querySelector(selectorApp);
     const phonebook = renderPhonebook(app, title);
+
+    // обработка хэшей добавляем в массив объектов хэш
+    data = origin.map((obj, index) => {
+      const str = '' + index +
+          Object.values(obj).reduce((accum, curr) => (accum + curr), '');
+      obj.id = 'id' + hashCode(str);
+      return obj;
+    });
+
 
     const {list, logo, btnAdd, btnDel, formOverlay, closeBtn, form} = phonebook;
 
@@ -320,6 +369,19 @@ const data = [
       }
       // сделать невидимым оверлей
       formOverlay.classList.remove('is-visible');
+    });
+
+    list.addEventListener('click', (e) => {
+      const target = e.target;
+      if (target.classList.contains('del-icon')) {
+        const targetRow = target.closest('.tdRow'); // clicked Row
+        const dataID = targetRow.id; // data ID contact
+        deteleDataContact(dataID);
+        targetRow.remove();
+        console.log(data);
+        return;
+      }
+      console.log(target);
     });
   };
 
