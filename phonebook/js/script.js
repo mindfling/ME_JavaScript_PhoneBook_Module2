@@ -23,7 +23,7 @@ const data = [
   },
   {
     name: 'Dmitry',
-    surname: 'Vasylivi4',
+    surname: 'Василич',
     phone: '+79001234567',
   },
 ];
@@ -118,7 +118,7 @@ const data = [
     form.classList.add('form');
     form.insertAdjacentHTML('beforeend', `
       <button class="close" type="button"></button>
-      <h2 class="form-title">Добавить Контакты</h2>
+      <h2 class="form-title">Добавить Контакт</h2>
       <div class="form-group">
         <label class="form-lable col-12" for="name">Имя</label>
         <input class="form-input col-12 form-control" name="name"
@@ -197,15 +197,14 @@ const data = [
 
     header.headerContainer.append(logo);
     main.mainContainer.append(buttonGroup.btnWrapper, table, form.overlay);
-    // footer.footerContainer.innerHTML = 'Все права защищены &copy; Автор';
-    footer.footerContainer.innerHTML = 'Все права защищены &copy; ' + title;
-
+    main.append(form.overlay);
+    footer.footerContainer.innerHTML = `Все права защищены &copy; ${title}`;
     app.append(header, main, footer);
-
     return {
       list: table.tbody,
       logo,
       btnAdd: buttonGroup.btns[0],
+      btnDel: buttonGroup.btns[1],
       formOverlay: form.overlay,
       form: form.form,
     };
@@ -233,6 +232,8 @@ const data = [
     tr.phoneLink = phoneLink;
     tdPhone.append(phoneLink);
 
+    tr.title = `Контакт ${surname} ${firstname}`;
+
     tr.append(tdDel, tdName, tdSurname, tdPhone);
 
     return tr;
@@ -246,7 +247,6 @@ const data = [
   };
 
 
-  // * practice working lesson05
   const hoverRow = (allRow, logo) => {
     const text = logo.textContent;
 
@@ -261,62 +261,13 @@ const data = [
     return;
   };
 
-  /*
-  // * working lesson05 TEMP PACTICE WORKING
-  const bubblingCapturing = () => {
-    const btnAdd = document.querySelector('.js-add');
-    const btnDel = document.querySelector('.js-del');
-    const btnWrapper = document.querySelector('.btn-wrapper');
-    const main = document.querySelector('main');
-    const app = document.querySelector('#app');
-    const body = document.querySelector('body');
-    document.querySelectorAll('.container').forEach((container, i) => {
-      container.addEventListener('click', e => {
-        console.log(e.target.closest('.container'), 'container numb: ' + i);
-      });
-    });
 
-    btnAdd.addEventListener('click', (e) => {
-      console.log('add');
-    }, false);
-    // * false default в обработчике - значит событие срабатывает на всплытие
-    // * true - на погружение
-    btnDel.addEventListener('click', (e) => {
-      console.log('del');
-    }, false);
-    btnWrapper.addEventListener('click', (e) => {
-      console.log('btnWrapper');
-    }, false);
-    main.addEventListener('click', (e) => {
-      console.log('main');
-    }, false);
-    app.addEventListener('click', (e) => {
-      console.log('app');
-    }, false);
-    body.addEventListener('click', (e) => {
-      console.log('body');
-    }, false);
-
-    window.addEventListener('click', (e) => {
-      console.log('window');
-    });
-    document.addEventListener('click', (e) => {
-      console.log('document');
-    });
-    document.documentElement.addEventListener('click', (e) => {
-      console.log('html documentElement');
-    });
-
-    return;
-  };
-  */
-
-
+  // * MAIN INIT *
   const init = (selectorApp, title) => {
     const app = document.querySelector(selectorApp);
     const phonebook = renderPhonebook(app, title);
 
-    const {list, logo, btnAdd, formOverlay, form} = phonebook;
+    const {list, logo, btnAdd, btnDel, formOverlay, form} = phonebook;
 
     // todo функционал here
 
@@ -326,64 +277,55 @@ const data = [
 
     // можно использовать объект событий
     const objEvent = {
-      b: 22,
       handleEvent(event) {
         // просто пример
         if (event.ctrlKey) {
-          this.bar();
+          this.makeGrey();
         } else {
-          this.foo();
+          this.btnHandle(event.target);
         }
       },
-      bar() {
+      makeGrey() {
         document.body.style.backgroundColor = 'dimgrey';
-        alert('it was ctrl and click');
+        // alert('it was ctrl and click');
       },
-      foo() {
-        // здесь делаем видимым оверлай и модалку
-        formOverlay.classList.add('is-visible');
+      btnHandle(target) {
+        if (target === btnAdd) {
+          // здесь делаем видимым оверлай и модалку
+          formOverlay.classList.add('is-visible');
+          return;
+        }
+        if (target === btnDel) {
+          // здесь делаем видимым оверлай и модалку
+          // const dellCellAll = document.querySelectorAll('.delete');
+          const dellCellAll = list.parentElement.querySelectorAll('.delete');
+          console.log('list.parentElement: ', list.parentElement);
+          dellCellAll.forEach(cell => {
+            cell.classList.add('is-visible');
+          });
+          return;
+        }
       },
     };
 
     // * handleEvent obj
     btnAdd.addEventListener('click', objEvent);
+    btnDel.addEventListener('click', objEvent);
 
     formOverlay.addEventListener('click', (event) => {
-      console.log(event.target);
-
-      // отрабатываем клик по кнокпе close
-      if (event.target === form.querySelector('.close')) {
+      // console.log(event.target);
+      // ** отрабатываем клик по кнокпе CLOSE
+      if (event.target === form.closest('.close')) {
         formOverlay.classList.remove('is-visible');
         return;
       }
-
       // блокируем клик по самой форме
       if (event.target.closest('.form')) {
         return;
       }
-
+      // сделать невидимым оверлей
       formOverlay.classList.remove('is-visible');
     });
-
-    /*
-    // * working lesson05 TEMP PACTICE WORKING
-    // * практика МУЛЬТИТАЧ
-    document.addEventListener('touchstart', (e) => {
-      console.log('touchstart', e.type);
-    });
-
-    document.addEventListener('touchmove', (e) => {
-      console.log('touchmove', e.type);
-    });
-
-    document.addEventListener('', (e) => {
-      console.log('touchend', e.type);
-    });
-    */
-
-
-    // * пример всплытия перезвата событий
-    // bubblingCapturing();
   };
 
 
