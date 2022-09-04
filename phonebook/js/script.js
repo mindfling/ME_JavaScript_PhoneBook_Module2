@@ -120,19 +120,22 @@ const data = [
       <button class="close" type="button"></button>
       <h2 class="form-title">Добавить Контакты</h2>
       <div class="form-group">
-        <label class="form-lable" for="name">Имя</label>
-        <input class="form-input" name="name"
+        <label class="form-lable col-12" for="name">Имя</label>
+        <input class="form-input col-12 form-control" name="name"
             id="name" type="text" required>
       </div>
       <div class="form-group">
-        <label class="form-lable" for="surname">Фамилия</label>
-        <input class="form-input" name="surname"
+        <label class="form-lable col-12" for="surname">Фамилия</label>
+        <input class="form-input col-10 form-control" name="surname"
             id="surname" type="text" required>
       </div>
       <div class="form-group">
-        <label class="form-lable" for="phone">Телефон</label>
-        <input class="form-input" name="phone"
+        <label class="form-lable col-12" for="phone">Телефон</label>
+        <input class="form-input col-8 form-control" name="phone"
             id="phone" type="text" required>
+      </div>
+      <div class="form-group">
+        <label class="col-12"></label>
       </div>
     `);
 
@@ -149,7 +152,8 @@ const data = [
       },
     ]);
 
-    form.append(...buttonGroup.btns);
+    // form.append(...buttonGroup.btns);
+    form.append(buttonGroup.btnWrapper);
 
     overlay.append(form);
 
@@ -257,6 +261,7 @@ const data = [
     return;
   };
 
+  /*
   // * working lesson05 TEMP PACTICE WORKING
   const bubblingCapturing = () => {
     const btnAdd = document.querySelector('.js-add');
@@ -265,15 +270,11 @@ const data = [
     const main = document.querySelector('main');
     const app = document.querySelector('#app');
     const body = document.querySelector('body');
-
-    // const containersAll = document.querySelectorAll('.container');
-    // вешаем события на все элементы
     document.querySelectorAll('.container').forEach((container, i) => {
       container.addEventListener('click', e => {
         console.log(e.target.closest('.container'), 'container numb: ' + i);
       });
     });
-
 
     btnAdd.addEventListener('click', (e) => {
       console.log('add');
@@ -308,6 +309,7 @@ const data = [
 
     return;
   };
+  */
 
 
   const init = (selectorApp, title) => {
@@ -324,7 +326,6 @@ const data = [
 
     // можно использовать объект событий
     const objEvent = {
-      a: '1',
       b: 22,
       handleEvent(event) {
         // просто пример
@@ -346,40 +347,25 @@ const data = [
 
     // * handleEvent obj
     btnAdd.addEventListener('click', objEvent);
-    // simple click event
-    // btnAdd.addEventListener('click', () => {
-    //   formOverlay.classList.add('is-visible');
-    // });
-
-    // ! так делать не надо !
-    form.addEventListener('click', event => {
-      // * блокируем всплытие события
-      // event.stopImmediatePropagation(); // так
-      event.stopPropagation(); // или так
-    });
 
     formOverlay.addEventListener('click', (event) => {
-      console.log('over: ', formOverlay);
       console.log(event.target);
+
       // отрабатываем клик по кнокпе close
       if (event.target === form.querySelector('.close')) {
         formOverlay.classList.remove('is-visible');
         return;
       }
 
-      // при клике на оверлай скрывем модалку
-      // if (event.target === formOverlay) {
-      //   formOverlay.classList.remove('is-visible');
-      // };
-
       // блокируем клик по самой форме
-      // if (event.target.closest('.form')) {
-      //   return;
-      // }
+      if (event.target.closest('.form')) {
+        return;
+      }
 
       formOverlay.classList.remove('is-visible');
     });
 
+    /*
     // * working lesson05 TEMP PACTICE WORKING
     // * практика МУЛЬТИТАЧ
     document.addEventListener('touchstart', (e) => {
@@ -393,10 +379,11 @@ const data = [
     document.addEventListener('', (e) => {
       console.log('touchend', e.type);
     });
+    */
 
 
     // * пример всплытия перезвата событий
-    bubblingCapturing();
+    // bubblingCapturing();
   };
 
 
