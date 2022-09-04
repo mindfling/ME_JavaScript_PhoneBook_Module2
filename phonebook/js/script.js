@@ -38,12 +38,9 @@ const data = [
   const createHeader = () => {
     const header = document.createElement('header');
     header.classList.add('header');
-
     const headerContainer = createContainer();
     header.append(headerContainer);
-
     header.headerContainer = headerContainer;
-
     return header;
   };
 
@@ -51,17 +48,14 @@ const data = [
     const h1 = document.createElement('h1');
     h1.classList.add('logo');
     h1.textContent = `Телефонный справочник. ${title}`;
-
     return h1;
   };
 
   const createMain = () => {
     const main = document.createElement('main');
-
     const mainContainer = createContainer();
     main.append(mainContainer);
     main.mainContainer = mainContainer;
-
     return main;
   };
 
@@ -69,17 +63,16 @@ const data = [
     const btnWrapper = document.createElement('div');
     btnWrapper.classList.add('btn-wrapper');
 
-    const btns = params.map(({className, type, text}) => {
+    const btns = params.map(({className, type, text, title}) => {
       const button = document.createElement('button');
       button.type = type;
       button.textContent = text;
       button.className = className;
-      // button.classList.add(className);
+      button.title = title ? title : '';
       return button;
     });
 
     btnWrapper.append(...btns);
-
     return {
       btnWrapper,
       btns,
@@ -89,7 +82,6 @@ const data = [
   const createTable = (data) => {
     const table = document.createElement('table');
     table.classList.add('table', 'table-striped');
-
     const thead = document.createElement('thead');
     thead.insertAdjacentHTML('beforeend', `
       <tr>
@@ -101,24 +93,34 @@ const data = [
     `);
 
     const tbody = document.createElement('tbody');
-
     table.append(thead, tbody);
-
     table.thead = thead;
     table.tbody = tbody;
-
     return table;
   };
 
   const createForm = () => {
     const overlay = document.createElement('div');
     overlay.classList.add('form-overlay');
-
     const form = document.createElement('form');
     form.classList.add('form');
-    form.insertAdjacentHTML('beforeend', `
-      <button class="close" type="button"></button>
+
+    // <h2 class="form-title">Добавить Контакт</h2>
+    form.insertAdjacentHTML('afterbegin', `
       <h2 class="form-title">Добавить Контакт</h2>
+    `);
+
+    // <button class="close" type="button"></button>
+    const closeBtn = createButtonGroup([
+      {
+        className: 'close',
+        type: 'button',
+        title: 'Закрыть форму',
+      },
+    ]).btns[0];
+    form.prepend(closeBtn);
+
+    form.insertAdjacentHTML('beforeend', `
       <div class="form-group">
         <label class="form-lable col-12" for="name">Имя</label>
         <input class="form-input col-12 form-control" name="name"
@@ -138,7 +140,6 @@ const data = [
         <label class="col-12"></label>
       </div>
     `);
-
     const buttonGroup = createButtonGroup([
       {
         className: 'btn btn-primary mr-3',
@@ -154,11 +155,10 @@ const data = [
 
     // form.append(...buttonGroup.btns);
     form.append(buttonGroup.btnWrapper);
-
     overlay.append(form);
-
     return {
       overlay,
+      closeBtn,
       form,
     };
   };
@@ -166,12 +166,10 @@ const data = [
   const createFooter = () => {
     const footer = document.createElement('footer');
     footer.classList.add('footer');
-
     const footerContainer = createContainer();
     footer.append(footerContainer);
     footer.footerContainer = footerContainer;
     footerContainer.textContent = 'Футер копирайт';
-
     return footer;
   };
 
@@ -207,6 +205,7 @@ const data = [
       btnDel: buttonGroup.btns[1],
       formOverlay: form.overlay,
       form: form.form,
+      closeBtn: form.closeBtn,
     };
   };
 
@@ -233,9 +232,7 @@ const data = [
     tdPhone.append(phoneLink);
 
     tr.title = `Контакт ${surname} ${firstname}`;
-
     tr.append(tdDel, tdName, tdSurname, tdPhone);
-
     return tr;
   };
 
@@ -246,10 +243,8 @@ const data = [
     return allRows;
   };
 
-
   const hoverRow = (allRow, logo) => {
     const text = logo.textContent;
-
     allRow.forEach(contact => {
       contact.addEventListener('mouseenter', () => {
         logo.textContent = contact.phoneLink?.textContent;
@@ -267,7 +262,7 @@ const data = [
     const app = document.querySelector(selectorApp);
     const phonebook = renderPhonebook(app, title);
 
-    const {list, logo, btnAdd, btnDel, formOverlay, form} = phonebook;
+    const {list, logo, btnAdd, btnDel, formOverlay, closeBtn, form} = phonebook;
 
     // todo функционал here
 
@@ -296,10 +291,9 @@ const data = [
           return;
         }
         if (target === btnDel) {
-          // здесь делаем видимым оверлай и модалку
-          // const dellCellAll = document.querySelectorAll('.delete');
+          // здесь находим все элементы .delete и делаем их видимыми
+          // const dellCellAll = table.querySelectorAll('.delete');
           const dellCellAll = list.parentElement.querySelectorAll('.delete');
-          console.log('list.parentElement: ', list.parentElement);
           dellCellAll.forEach(cell => {
             cell.classList.add('is-visible');
           });
@@ -308,19 +302,20 @@ const data = [
       },
     };
 
-    // * handleEvent obj
+    // * handleEvent obj клики по кнопкам Добавить и Удалить
     btnAdd.addEventListener('click', objEvent);
     btnDel.addEventListener('click', objEvent);
 
     formOverlay.addEventListener('click', (event) => {
+      const target = event.target;
       // console.log(event.target);
       // ** отрабатываем клик по кнокпе CLOSE
-      if (event.target === form.closest('.close')) {
+      if (target === closeBtn) {
         formOverlay.classList.remove('is-visible');
         return;
       }
       // блокируем клик по самой форме
-      if (event.target.closest('.form')) {
+      if (target.closest('.form')) {
         return;
       }
       // сделать невидимым оверлей
