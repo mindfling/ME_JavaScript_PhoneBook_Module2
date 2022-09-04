@@ -254,10 +254,10 @@ const data = [
         logo.textContent = text;
       });
     });
-    return ;
+    return;
   };
 
-  // * working lesson05 TEMP
+  // * working lesson05 TEMP PACTICE WORKING
   const bubblingCapturing = () => {
     const btnAdd = document.querySelector('.js-add');
     const btnDel = document.querySelector('.js-del');
@@ -267,13 +267,14 @@ const data = [
     const body = document.querySelector('body');
 
     // const containersAll = document.querySelectorAll('.container');
-    document.querySelectorAll('.container').forEach( (container, i) => {
+    // вешаем события на все элементы
+    document.querySelectorAll('.container').forEach((container, i) => {
       container.addEventListener('click', e => {
         console.log(e.target.closest('.container'), 'container numb: ' + i);
       });
-    })
-    
-    
+    });
+
+
     btnAdd.addEventListener('click', (e) => {
       console.log('add');
     }, false);
@@ -305,12 +306,8 @@ const data = [
       console.log('html documentElement');
     });
 
-
-
-    
-    
-    return ;
-  }
+    return;
+  };
 
 
   const init = (selectorApp, title) => {
@@ -320,13 +317,12 @@ const data = [
     const {list, logo, btnAdd, formOverlay, form} = phonebook;
 
     // todo функционал here
-    
+
     const allRow = renderContacts(list, data);
 
     hoverRow(allRow, logo);
 
-
-
+    // можно использовать объект событий
     const objEvent = {
       a: '1',
       b: 22,
@@ -345,48 +341,62 @@ const data = [
       foo() {
         // здесь делаем видимым оверлай и модалку
         formOverlay.classList.add('is-visible');
-      }
+      },
     };
 
     // * handleEvent obj
     btnAdd.addEventListener('click', objEvent);
-    
-    // ? simple click event 
+    // simple click event
     // btnAdd.addEventListener('click', () => {
     //   formOverlay.classList.add('is-visible');
     // });
 
-    // * блокируем всплытие события
+    // ! так делать не надо !
     form.addEventListener('click', event => {
-      event.stopImmediatePropagation();
-      // event.stopPropagation();
-    })
+      // * блокируем всплытие события
+      // event.stopImmediatePropagation(); // так
+      event.stopPropagation(); // или так
+    });
 
     formOverlay.addEventListener('click', (event) => {
-      // при клике на оверлай скрывем модалку
-      
-      // if (event.target === formOverlay) {
-      //   formOverlay.classList.remove('is-visible');
-      // };
-
+      console.log('over: ', formOverlay);
+      console.log(event.target);
       // отрабатываем клик по кнокпе close
       if (event.target === form.querySelector('.close')) {
         formOverlay.classList.remove('is-visible');
         return;
       }
-      
+
+      // при клике на оверлай скрывем модалку
+      // if (event.target === formOverlay) {
+      //   formOverlay.classList.remove('is-visible');
+      // };
+
       // блокируем клик по самой форме
       // if (event.target.closest('.form')) {
       //   return;
       // }
-      
+
       formOverlay.classList.remove('is-visible');
-      
-    })
+    });
+
+    // * working lesson05 TEMP PACTICE WORKING
+    // * практика МУЛЬТИТАЧ
+    document.addEventListener('touchstart', (e) => {
+      console.log('touchstart', e.type);
+    });
+
+    document.addEventListener('touchmove', (e) => {
+      console.log('touchmove', e.type);
+    });
+
+    document.addEventListener('', (e) => {
+      console.log('touchend', e.type);
+    });
 
 
-    // *
-    // bubblingCapturing();
+    // * пример всплытия перезвата событий
+    bubblingCapturing();
   };
 
 
