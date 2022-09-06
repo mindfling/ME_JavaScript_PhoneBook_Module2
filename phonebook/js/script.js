@@ -2,29 +2,34 @@
 
 const origin = [
   {
-    name: 'Иван',
+    name: 'Анатолий',
     surname: 'Петров',
-    phone: '+79514545454',
+    phone: '+79374545454',
   },
   {
     name: 'Игорь',
     surname: 'Семёнов',
-    phone: '+79999999999',
+    phone: '+79059999999',
   },
   {
     name: 'Семён',
     surname: 'Иванов',
-    phone: '+79800252525',
+    phone: '+79010252525',
   },
   {
     name: 'Мария',
     surname: 'Попова',
-    phone: '+79876543210',
+    phone: '+79166543210',
   },
   {
-    name: 'Dmitry',
+    name: 'Аверий',
     surname: 'Василич',
     phone: '+79001234567',
+  },
+  {
+    name: 'Николай',
+    surname: 'Яковлевич',
+    phone: '+1231234567',
   },
 ];
 
@@ -56,7 +61,6 @@ const origin = [
     return contact[0];
   };
 
-
   // * deteleDataContact
   const deteleDataContact = (id) => {
     // удалить этот элем из массива
@@ -65,6 +69,60 @@ const origin = [
         data.splice(index, 1);
       }
     });
+  };
+
+  // * sortDataBy
+  const sortDataBy = (order) => {
+    let sorted = [];
+    switch (order) {
+      case 'by-name':
+        console.log('сортировка по имени');
+        sorted = data.sort((prodA, prodB) => {
+          const nameA = prodA.name;
+          const nameB = prodB.name;
+          if (nameA > nameB) {
+            return 1;
+          } else if (nameA < nameB) {
+            return -1;
+          } else {
+            return 0;
+          }
+        });
+        break;
+      case 'by-surname':
+        console.log('сортировка по фамилии');
+        sorted = data.sort((prodPrev, prodNext) => {
+          const paramPrev = prodPrev.surname;
+          const paramNext = prodNext.surname;
+          if (paramPrev > paramNext) {
+            return 1;
+          } else if (paramPrev < paramNext) {
+            return -1;
+          } else {
+            return 0;
+          }
+        });
+        break;
+      case 'by-phone':
+        console.log('сортировка по номеру телефона');
+        sorted = data.sort((prodPrev, prodNext) => {
+          const paramPrev = prodPrev.phone;
+          const paramNext = prodNext.phone;
+          if (paramPrev > paramNext) {
+            return 1;
+          } else if (paramPrev < paramNext) {
+            return -1;
+          } else {
+            return 0;
+          }
+        });
+        break;
+      default:
+        console.log('по умолчанию');
+        break;
+    }
+    // return data;
+    return sorted;
   };
 
 
@@ -384,10 +442,42 @@ const origin = [
       console.log(target);
     });
 
+    // клик по заголовкам таблицы Имя Фамилия Телефон
     list.parentElement.addEventListener('click', e => {
-      console.log('table click', e.target);
-      if(e.target.closest('.table__cell_head')) {
-        console.log('Ячейки заголовка', e.target.textContent);
+      const target = e.target;
+      // console.log('table click', e.target);
+      if (e.target.closest('.table__cell_head')) {
+        const order = target.dataset?.sortby;
+        console.log('Ячейки заголовка', e.target.textContent, order);
+        console.log('Сортировка SortBy: ', e.target.dataset.sortby);
+
+        const sortData = sortDataBy(order);
+        console.log('sortData: ', sortData);
+        /*
+        switch (order) {
+          case 'by-name':
+            console.log('сортировка по имени');
+            break;
+          case 'by-surname':
+            console.log('сортировка по фамилии');
+            break;
+          case 'by-phone':
+            console.log('сортировка по номеру телефона');
+            break;
+          default:
+            console.log('по умолчанию');
+            break;
+        }
+        */
+        console.log(list);
+        // * clearContactList
+        while (list.lastChild) {
+          list.lastChild.remove();
+        }
+        // while (list.firstChild) {
+        //   list.firstChild.remove();
+        // }
+        renderContacts(list, sortData);
       }
     });
   };
