@@ -123,11 +123,11 @@ const origin = [
     table.classList.add('table', 'table-striped');
     const thead = document.createElement('thead');
     thead.insertAdjacentHTML('beforeend', `
-      <tr>
+      <tr class="table__row_head">
         <th class="delete">Удалить</th>
-        <th>Имя</th>
-        <th>Фамилия</th>
-        <th>Телефон</th>
+        <th class="table__cell_head" data-sortby="by-name">Имя</th>
+        <th class="table__cell_head" data-sortby="by-surname">Фамилия</th>
+        <th class="table__cell_head" data-sortby="by-phone">Телефон</th>
       </tr>
     `);
 
@@ -382,6 +382,13 @@ const origin = [
         return;
       }
       console.log(target);
+    });
+
+    list.parentElement.addEventListener('click', e => {
+      console.log('table click', e.target);
+      if(e.target.closest('.table__cell_head')) {
+        console.log('Ячейки заголовка', e.target.textContent);
+      }
     });
   };
 

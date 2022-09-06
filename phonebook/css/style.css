@@ -130,3 +130,13 @@ body {
   color: #fff;
   text-align: center;
 }
+
+/* */
+.table__cell_head {
+  opacity: 1;
+  cursor: default;
+}
+
+.table__cell_head:hover {
+  opacity: 0.8;
+}
