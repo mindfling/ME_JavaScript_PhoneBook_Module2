@@ -2,7 +2,7 @@
 
 const origin = [
   {
-    name: 'Анатолий',
+    name: 'Владимир',
     surname: 'Петров',
     phone: '+79374545454',
   },
@@ -17,13 +17,13 @@ const origin = [
     phone: '+79010252525',
   },
   {
-    name: 'Мария',
-    surname: 'Попова',
+    name: 'Татьяна',
+    surname: 'Деева',
     phone: '+79166543210',
   },
   {
     name: 'Аверий',
-    surname: 'Василич',
+    surname: 'Симонов',
     phone: '+79001234567',
   },
   {
@@ -354,8 +354,18 @@ const origin = [
     return;
   };
 
+  const closeAllDelete = (parent) => {
+    // функция скрывает все видимые элементы .delete
+    const dellCellAll = parent.querySelectorAll('.delete');
+    dellCellAll.forEach(cell => {
+      // все видимые .delete.is-visible элементы делаем невидимыми
+      cell.classList.remove('is-visible');
+    });
+    return;
+  };
 
-  // * MAIN INIT *
+
+  // * MAIN INIT * //
   const init = (selectorApp, title) => {
     const app = document.querySelector(selectorApp);
     const phonebook = renderPhonebook(app, title);
@@ -371,7 +381,7 @@ const origin = [
 
     const {list, logo, btnAdd, btnDel, formOverlay, closeBtn, form} = phonebook;
 
-    // todo функционал here
+    // todo ФУНКЦИОНАЛ ЗДЕСЬ
 
     const allRow = renderContacts(list, data);
 
@@ -379,6 +389,7 @@ const origin = [
 
     // можно использовать объект событий
     const objEvent = {
+      visibleFlag: false,
       handleEvent(event) {
         // просто пример
         if (event.ctrlKey) {
@@ -401,9 +412,19 @@ const origin = [
           // здесь находим все элементы .delete и делаем их видимыми
           // const dellCellAll = table.querySelectorAll('.delete');
           const dellCellAll = list.parentElement.querySelectorAll('.delete');
-          dellCellAll.forEach(cell => {
-            cell.classList.add('is-visible');
-          });
+          if (this.visibleFlag) {
+            dellCellAll.forEach(cell => {
+              // все видимые .delete.is-visible элементы делаем невидимыми
+              this.visibleFlag = false;
+              cell.classList.remove('is-visible');
+            });
+          } else {
+            dellCellAll.forEach(cell => {
+              // все невидимые .delete элем делаем видимыми
+              cell.classList.add('is-visible');
+              this.visibleFlag = true;
+            });
+          }
           return;
         }
       },
@@ -447,36 +468,23 @@ const origin = [
       const target = e.target;
       // console.log('table click', e.target);
       if (e.target.closest('.table__cell_head')) {
+        // todo сразу же скрываем все видимые .delete элем
+        closeAllDelete(list.parentElement);
+        objEvent.visibleFlag = false;
+        // порядок сортировки
         const order = target.dataset?.sortby;
-        console.log('Ячейки заголовка', e.target.textContent, order);
-        console.log('Сортировка SortBy: ', e.target.dataset.sortby);
-
+        // сортируем
         const sortData = sortDataBy(order);
-        console.log('sortData: ', sortData);
-        /*
-        switch (order) {
-          case 'by-name':
-            console.log('сортировка по имени');
-            break;
-          case 'by-surname':
-            console.log('сортировка по фамилии');
-            break;
-          case 'by-phone':
-            console.log('сортировка по номеру телефона');
-            break;
-          default:
-            console.log('по умолчанию');
-            break;
-        }
-        */
-        console.log(list);
-        // * clearContactList
+
+        // * clearContactList очищаем список контактов в DOM
         while (list.lastChild) {
           list.lastChild.remove();
         }
         // while (list.firstChild) {
         //   list.firstChild.remove();
         // }
+
+        // * перерисовка обновленного списка контактов
         renderContacts(list, sortData);
       }
     });
