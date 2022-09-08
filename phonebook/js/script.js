@@ -25,9 +25,9 @@
   // получить контакт из массива data by id
   const getDataContact = (id) => {
     // filter фильтрует элементы выдает массив контактов с данным id
-    const contact = data.filter(contact => (contact.id === id));
+    const contacts = data.filter(contact => (contact.id === id));
     // console.log('contact: ', contact);
-    return contact[0];
+    return contacts[0];
   };
 
 
@@ -225,7 +225,7 @@
   const createRow = ({name: firstname, surname, phone, id}) => {
     const tr = document.createElement('tr');
     tr.id = id; // id ряда конткта для идентификации
-    tr.classList.add('tdRow');
+    tr.classList.add('contact');
     tr.title = `Контакт ${surname} ${firstname}`;
 
     const tdDel = document.createElement('td');
@@ -276,8 +276,6 @@
     const app = document.querySelector(selectorApp);
     const phonebook = renderPhonebook(app, title);
 
-    console.log('data: ', data);
-
     // обработка хэшей добавляем в массив объектов хэш
     /*
       data = origin.map((obj, index) => {
@@ -295,7 +293,15 @@
     });
 
 
-    const {list, logo, btnAdd, btnDel, formOverlay, closeBtn, form} = phonebook;
+    const {
+      list,
+      logo,
+      btnAdd,
+      btnDel,
+      formOverlay,
+      closeBtn,
+      form,
+    } = phonebook;
 
     // todo функционал here
 
@@ -325,10 +331,10 @@
         }
         if (target === btnDel) {
           // здесь находим все элементы .delete и делаем их видимыми
-          // const dellCellAll = table.querySelectorAll('.delete');
+          // ? const dellCellAll = table.querySelectorAll('.delete');
           const dellCellAll = list.parentElement.querySelectorAll('.delete');
-          dellCellAll.forEach(cell => {
-            cell.classList.add('is-visible');
+          dellCellAll.forEach(del => {
+            del.classList.add('is-visible');
           });
           return;
         }
@@ -339,30 +345,44 @@
     btnAdd.addEventListener('click', objEvent);
     btnDel.addEventListener('click', objEvent);
 
-    formOverlay.addEventListener('click', (event) => {
-      const target = event.target;
-      // console.log(event.target);
-      // ** отрабатываем клик по кнокпе CLOSE
+    // ? клик по оверлею 1й вариант
+    // formOverlay.addEventListener('click', (event) => {
+    //   const target = event.target;
+    //   // отрабатываем клик по кнокпе CLOSE
+    //   if (target === closeBtn) {
+    //     formOverlay.classList.remove('is-visible');
+    //     return;
+    //   }
+    //   // блокируем клик по самой форме
+    //   if (target.closest('.form')) {
+    //     return;
+    //   }
+    //   // сделать невидимым оверлей
+    //   formOverlay.classList.remove('is-visible');
+    // });
+
+    // ? клик по оверлею 2й вариант
+    formOverlay.addEventListener('click', e => {
+      const target = e.target;
+      // отрабатываем клик по кнокпе CLOSE
       if (target === closeBtn) {
         formOverlay.classList.remove('is-visible');
         return;
       }
-      // блокируем клик по самой форме
-      if (target.closest('.form')) {
+      if (target === formOverlay) {
+        formOverlay.classList.remove('is-visible');
         return;
       }
-      // сделать невидимым оверлей
-      formOverlay.classList.remove('is-visible');
     });
 
     list.addEventListener('click', (e) => {
       const target = e.target;
-      if (target.classList.contains('del-icon')) {
-        const targetRow = target.closest('.tdRow'); // clicked Row
+      if (target.closest('.del-icon')) {
+        const targetRow = target.closest('.contact'); // clicked Row
         const dataID = targetRow.id; // data ID contact
         deteleDataContact(dataID);
+        console.log(data); // выводим в консоль то что у нас вышло
         targetRow.remove();
-        console.log(data);
         return;
       }
       console.log(target);
