@@ -160,8 +160,8 @@
     overlay.append(form);
     return {
       overlay,
-      closeBtn,
       form,
+      closeBtn,
     };
   };
 
@@ -192,12 +192,12 @@
       },
     ]);
     const table = createTable();
-    const form = createForm();
+    const {form, overlay, closeBtn} = createForm();
     const footer = createFooter();
 
     header.headerContainer.append(logo);
-    main.mainContainer.append(buttonGroup.btnWrapper, table, form.overlay);
-    main.append(form.overlay);
+    main.mainContainer.append(buttonGroup.btnWrapper, table, overlay);
+    main.append(overlay);
     footer.footerContainer.innerHTML = `Все права защищены &copy; ${title}`;
     app.append(header, main, footer);
     return {
@@ -205,9 +205,9 @@
       list: table.tbody,
       btnAdd: buttonGroup.btns[0],
       btnDel: buttonGroup.btns[1],
-      closeBtn: form.closeBtn,
-      formOverlay: form.overlay,
-      form: form.form,
+      closeBtn,
+      formOverlay: overlay,
+      form,
     };
   };
 
@@ -262,19 +262,32 @@
 
   // функционал работы с модальной формой
   const modalControl = ({btnAdd, formOverlay, closeBtn, objEvent}) => {
-    // * handleEvent obj клики по кнопкам Добавить и Удалить
-    btnAdd.addEventListener('click', () => {
+    // открыть модалку
+    const openModal = () => {
       formOverlay.classList.add('is-visible');
-    });
+    };
+
+    // закрыть модалку
+    const closeModal = () => {
+      formOverlay.classList.remove('is-visible');
+    };
+
+    // кнопка Добавить открывает модалку
+    btnAdd.addEventListener('click', openModal);
 
     formOverlay.addEventListener('click', e => {
       const target = e.target;
       // отрабатываем клик по кнокпе CLOSE и по оверлею
       if (target === closeBtn ||
         target === formOverlay) {
-        formOverlay.classList.remove('is-visible');
+        closeModal();
       }
     });
+
+    return {
+      openModal,
+      closeModal,
+    };
   };
 
   const deleteControl = ({btnDel, list, objEvent}) => {
@@ -301,6 +314,27 @@
     });
   };
 
+  const formControl = ({form, list, closeModal,}) => {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      console.log(e.target);
+      const name = form.name?.value;
+      const surname = form.surname?.value;
+      const phone = form.phone?.value;
+      console.log(name, surname, phone);
+      list.append(createRow({name, surname, phone,}));
+      const newContact = {
+        name,
+        surname,
+        phone,
+      };
+      data.push(newContact);
+      console.log('data: ', data);
+      form.reset();
+      // form.parentElement.classList.remove('is-visible');
+      closeModal();
+    });
+  };
 
   // * MAIN INIT *
   const init = (selectorApp, title) => {
@@ -326,29 +360,15 @@
 
     // todo ФУНКЦИОНАЛ ЗДЕСЬ
 
-      const objEvent = {
-        handleEvent(event) {
-          const target = event.target;
-          if (target === btnAdd) {
-            // здесь делаем видимым оверлай и модалку
-            formOverlay.classList.add('is-visible');
-            return;
-          }
-          if (target === btnDel) {
-            // здесь находим все элементы .delete и делаем их видимыми
-            const dellCellAll = list.parentElement.querySelectorAll('.delete');
-            dellCellAll.forEach(del => {
-              del.classList.add('is-visible');
-            });
-            return;
-          }
-        },
-      };
-
     const allRow = renderContacts(list, data);
     hoverRow(allRow, logo);
-    modalControl({formOverlay, btnAdd, closeBtn, objEvent});
-    deleteControl({btnDel, list, objEvent});
+    const {openModal, closeModal} = modalControl({
+      formOverlay,
+      btnAdd,
+      closeBtn,
+    });
+    deleteControl({btnDel, list,});
+    formControl({form, list, closeModal,});
   };
 
 
