@@ -113,13 +113,9 @@
     overlay.classList.add('form-overlay');
     const form = document.createElement('form');
     form.classList.add('form');
-
-    // <h2 class="form-title">Добавить Контакт</h2>
     form.insertAdjacentHTML('afterbegin', `
       <h2 class="form-title">Добавить Контакт</h2>
     `);
-
-    // <button class="close" type="button"></button>
     const closeBtn = createButtonGroup([
       {
         className: 'close',
@@ -128,7 +124,6 @@
       },
     ]).btns[0];
     form.prepend(closeBtn);
-
     form.insertAdjacentHTML('beforeend', `
       <div class="form-group">
         <label class="form-lable col-12" for="name">Имя</label>
@@ -161,8 +156,6 @@
         text: 'Отмена',
       },
     ]);
-
-    // form.append(...buttonGroup.btns);
     form.append(buttonGroup.btnWrapper);
     overlay.append(form);
     return {
@@ -188,12 +181,12 @@
     const main = createMain();
     const buttonGroup = createButtonGroup([
       {
-        className: 'btn btn-primary mr-3 js-add',
+        className: 'btn btn-primary mr-3',
         type: 'button',
         text: 'Добавить',
       },
       {
-        className: 'btn btn-danger js-del',
+        className: 'btn btn-danger',
         type: 'button',
         text: 'Удалить',
       },
@@ -208,13 +201,13 @@
     footer.footerContainer.innerHTML = `Все права защищены &copy; ${title}`;
     app.append(header, main, footer);
     return {
-      list: table.tbody,
       logo,
+      list: table.tbody,
       btnAdd: buttonGroup.btns[0],
       btnDel: buttonGroup.btns[1],
+      closeBtn: form.closeBtn,
       formOverlay: form.overlay,
       form: form.form,
-      closeBtn: form.closeBtn,
     };
   };
 
@@ -267,20 +260,53 @@
   };
 
 
+  // функционал работы с модальной формой
+  const modalControl = ({btnAdd, formOverlay, closeBtn, objEvent}) => {
+    // * handleEvent obj клики по кнопкам Добавить и Удалить
+    btnAdd.addEventListener('click', () => {
+      formOverlay.classList.add('is-visible');
+    });
+
+    formOverlay.addEventListener('click', e => {
+      const target = e.target;
+      // отрабатываем клик по кнокпе CLOSE и по оверлею
+      if (target === closeBtn ||
+        target === formOverlay) {
+        formOverlay.classList.remove('is-visible');
+      }
+    });
+  };
+
+  const deleteControl = ({btnDel, list, objEvent}) => {
+    // * handleEvent obj клики по кнопкам Добавить и Удалить
+    btnDel.addEventListener('click', () => {
+      const dellCellAll = list.parentElement.querySelectorAll('.delete');
+      dellCellAll.forEach(del => {
+        // del.classList.add('is-visible');
+        del.classList.toggle('is-visible');
+      });
+    });
+
+
+    list.addEventListener('click', (e) => {
+      const target = e.target;
+      if (target.closest('.del-icon')) {
+        const targetRow = target.closest('.contact'); // clicked Row
+        const dataID = targetRow.id; // data ID contact
+        deteleDataContact(dataID);
+        console.log(data); // выводим в консоль то что у нас вышло
+        targetRow.remove();
+        return;
+      }
+    });
+  };
+
+
   // * MAIN INIT *
   const init = (selectorApp, title) => {
     const app = document.querySelector(selectorApp);
-    const phonebook = renderPhonebook(app, title);
+    // const phonebook = renderPhonebook(app, title);
 
-    // обработка хэшей добавляем в массив объектов хэш
-    /*
-      data = origin.map((obj, index) => {
-        const str = '' + index +
-            Object.values(obj).reduce((accum, curr) => (accum + curr), '');
-        obj.id = 'id' + hashCode(str);
-        return obj;
-      });
-    */
     data.forEach((contact, index, arr) => {
       const str = '' + index +
           Object.values(contact).reduce((accum, curr) => (accum + curr), '');
@@ -295,89 +321,34 @@
       formOverlay,
       closeBtn,
       form,
-    } = phonebook;
+    } = renderPhonebook(app, title);
 
-    
+
     // todo ФУНКЦИОНАЛ ЗДЕСЬ
+
+      const objEvent = {
+        handleEvent(event) {
+          const target = event.target;
+          if (target === btnAdd) {
+            // здесь делаем видимым оверлай и модалку
+            formOverlay.classList.add('is-visible');
+            return;
+          }
+          if (target === btnDel) {
+            // здесь находим все элементы .delete и делаем их видимыми
+            const dellCellAll = list.parentElement.querySelectorAll('.delete');
+            dellCellAll.forEach(del => {
+              del.classList.add('is-visible');
+            });
+            return;
+          }
+        },
+      };
 
     const allRow = renderContacts(list, data);
     hoverRow(allRow, logo);
-
-    // можно использовать объект событий
-    const objEvent = {
-      handleEvent(event) {
-        // просто пример
-        if (event.ctrlKey) {
-          this.makeGrey();
-        } else {
-          this.btnHandle(event.target);
-        }
-      },
-      makeGrey() {
-        document.body.style.backgroundColor = 'dimgrey';
-        // alert('it was ctrl and click');
-      },
-      btnHandle(target) {
-        if (target === btnAdd) {
-          // здесь делаем видимым оверлай и модалку
-          formOverlay.classList.add('is-visible');
-          return;
-        }
-        if (target === btnDel) {
-          // здесь находим все элементы .delete и делаем их видимыми
-          // ? const dellCellAll = table.querySelectorAll('.delete');
-          const dellCellAll = list.parentElement.querySelectorAll('.delete');
-          dellCellAll.forEach(del => {
-            del.classList.add('is-visible');
-          });
-          return;
-        }
-      },
-    };
-
-    // * handleEvent obj клики по кнопкам Добавить и Удалить
-    btnAdd.addEventListener('click', objEvent);
-    btnDel.addEventListener('click', objEvent);
-
-    // ? клик по оверлею 1й вариант
-    // formOverlay.addEventListener('click', (event) => {
-    //   const target = event.target;
-    //   // отрабатываем клик по кнокпе CLOSE
-    //   if (target === closeBtn) {
-    //     formOverlay.classList.remove('is-visible');
-    //     return;
-    //   }
-    //   // блокируем клик по самой форме
-    //   if (target.closest('.form')) {
-    //     return;
-    //   }
-    //   // сделать невидимым оверлей
-    //   formOverlay.classList.remove('is-visible');
-    // });
-
-    // ? клик по оверлею 2й вариант
-    formOverlay.addEventListener('click', e => {
-      const target = e.target;
-      // отрабатываем клик по кнокпе CLOSE и по оверлею
-      if (target === closeBtn ||
-        target === formOverlay) {
-        formOverlay.classList.remove('is-visible');
-        return;
-      }
-    });
-
-    list.addEventListener('click', (e) => {
-      const target = e.target;
-      if (target.closest('.del-icon')) {
-        const targetRow = target.closest('.contact'); // clicked Row
-        const dataID = targetRow.id; // data ID contact
-        deteleDataContact(dataID);
-        console.log(data); // выводим в консоль то что у нас вышло
-        targetRow.remove();
-        return;
-      }
-      console.log(target);
-    });
+    modalControl({formOverlay, btnAdd, closeBtn, objEvent});
+    deleteControl({btnDel, list, objEvent});
   };
 
 
