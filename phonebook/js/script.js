@@ -314,21 +314,36 @@
     });
   };
 
+  // добавляем новый контакт
+  const addContactData = (newContact) => {
+    // todo добавлять хеш id для контакта
+    data.push(newContact);
+  };
+
+  // добавляем новую строку с контактом в таблицу
+  const addContactPage = (newContact, list) => {
+    list.append(createRow(newContact));
+  };
+
   const formControl = ({form, list, closeModal,}) => {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       console.log(e.target);
-      const name = form.name?.value;
-      const surname = form.surname?.value;
-      const phone = form.phone?.value;
-      console.log(name, surname, phone);
-      list.append(createRow({name, surname, phone,}));
-      const newContact = {
-        name,
-        surname,
-        phone,
-      };
-      data.push(newContact);
+      const formData = new FormData(e.target); // данные из формы
+      // const name = form.name?.value;
+      // const surname = form.surname?.value;
+      // const phone = form.phone?.value;
+      const newContact = Object.fromEntries(formData);
+      console.log('newContact: ', newContact);
+      // const newContact = {
+      //   name,
+      //   surname,
+      //   phone,
+      // };
+      addContactData(newContact);
+      addContactPage(newContact, list);
+      // list.append(createRow(newContact));
+      // list.append(createRow({name, surname, phone,}));
       console.log('data: ', data);
       form.reset();
       // form.parentElement.classList.remove('is-visible');
