@@ -437,17 +437,27 @@ const origin = [
     formOverlay.addEventListener('click', (event) => {
       const target = event.target;
       // console.log(event.target);
-      // ** отрабатываем клик по кнокпе CLOSE
-      if (target === closeBtn) {
+
+      if (objEvent.visibleFlag) {
+        // если есть нескрытые элементы, то при любом клике
+        // todo сразу же скрываем все видимые .delete элем
+        closeAllDelete(list.parentElement);
+        objEvent.visibleFlag = false;
+        console.log('Скрываем элементы при открытом модальном окне');
+      } else {
+        // если нет открытых элементов
+        // ** отрабатываем клик по кнокпе CLOSE
+        if (target === closeBtn) {
+          formOverlay.classList.remove('is-visible');
+          return;
+        }
+        // блокируем клик по самой форме
+        if (target.closest('.form')) {
+          return;
+        }
+        // сделать невидимым оверлей
         formOverlay.classList.remove('is-visible');
-        return;
       }
-      // блокируем клик по самой форме
-      if (target.closest('.form')) {
-        return;
-      }
-      // сделать невидимым оверлей
-      formOverlay.classList.remove('is-visible');
     });
 
     list.addEventListener('click', (e) => {
@@ -466,7 +476,7 @@ const origin = [
     // клик по заголовкам таблицы Имя Фамилия Телефон
     list.parentElement.addEventListener('click', e => {
       const target = e.target;
-      // console.log('table click', e.target);
+
       if (e.target.closest('.table__cell_head')) {
         // todo сразу же скрываем все видимые .delete элем
         closeAllDelete(list.parentElement);
@@ -480,10 +490,6 @@ const origin = [
         while (list.lastChild) {
           list.lastChild.remove();
         }
-        // while (list.firstChild) {
-        //   list.firstChild.remove();
-        // }
-
         // * перерисовка обновленного списка контактов
         renderContacts(list, sortData);
       }
