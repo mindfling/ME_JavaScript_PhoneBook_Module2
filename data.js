@@ -1,6 +1,6 @@
 'use strict';
 // список массив объектов данных пользователей
-const data = [
+const origin = [
   {
     name: 'Иван',
     surname: 'Петров',
@@ -22,8 +22,38 @@ const data = [
     phone: '+79876543210',
   },
   {
-    name: 'Dmitry',
-    surname: 'Vasylivi4',
+    name: 'Дмитрий',
+    surname: 'Маркулич',
     phone: '+79001234567',
+  },
+  {
+    name: 'Владимир',
+    surname: 'Петров',
+    phone: '+79374545454',
+  },
+  {
+    name: 'Петр',
+    surname: 'Иванов',
+    phone: '+79010252525',
+  },
+  {
+    name: 'Пётр',
+    surname: 'Петров',
+    phone: '+79010252525',
+  },
+  {
+    name: 'Татьяна',
+    surname: 'Авдеева',
+    phone: '+79166543210',
+  },
+  {
+    name: 'Аверий',
+    surname: 'Симонов',
+    phone: '+79001234567',
+  },
+  {
+    name: 'Николай',
+    surname: 'Яковлевич',
+    phone: '+1231234567',
   },
 ];

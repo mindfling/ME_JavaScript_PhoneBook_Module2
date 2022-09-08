@@ -1,42 +1,11 @@
 'use strict';
 
-const origin = [
-  {
-    name: 'Владимир',
-    surname: 'Петров',
-    phone: '+79374545454',
-  },
-  {
-    name: 'Игорь',
-    surname: 'Семёнов',
-    phone: '+79059999999',
-  },
-  {
-    name: 'Семён',
-    surname: 'Иванов',
-    phone: '+79010252525',
-  },
-  {
-    name: 'Татьяна',
-    surname: 'Деева',
-    phone: '+79166543210',
-  },
-  {
-    name: 'Аверий',
-    surname: 'Симонов',
-    phone: '+79001234567',
-  },
-  {
-    name: 'Николай',
-    surname: 'Яковлевич',
-    phone: '+1231234567',
-  },
-];
+// const origin = []; // перенести в отдельный файл
 
 {
   let data = [];
   /**
- * * Returns a hash code from a string use it for hosh contocts
+ * Returns a hash code from a string use it for hosh contocts
  * @param  {String} str The string to hash.
  * @return {Number}    A 32bit integer
  * @see http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
