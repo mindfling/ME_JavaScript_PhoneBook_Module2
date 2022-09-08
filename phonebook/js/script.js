@@ -1,35 +1,9 @@
 'use strict';
 
-const origin = [
-  {
-    name: 'Иван',
-    surname: 'Петров',
-    phone: '+79514545454',
-  },
-  {
-    name: 'Игорь',
-    surname: 'Семёнов',
-    phone: '+79999999999',
-  },
-  {
-    name: 'Семён',
-    surname: 'Иванов',
-    phone: '+79800252525',
-  },
-  {
-    name: 'Мария',
-    surname: 'Попова',
-    phone: '+79876543210',
-  },
-  {
-    name: 'Dmitry',
-    surname: 'Василич',
-    phone: '+79001234567',
-  },
-];
+
+// const data = []; // в отдельном ящике data.js
 
 {
-  let data = [];
   /**
  * * Returns a hash code from a string use it for hosh contocts
  * @param  {String} str The string to hash.
@@ -302,12 +276,22 @@ const origin = [
     const app = document.querySelector(selectorApp);
     const phonebook = renderPhonebook(app, title);
 
+    console.log('data: ', data);
+
     // обработка хэшей добавляем в массив объектов хэш
-    data = origin.map((obj, index) => {
+    /*
+      data = origin.map((obj, index) => {
+        const str = '' + index +
+            Object.values(obj).reduce((accum, curr) => (accum + curr), '');
+        obj.id = 'id' + hashCode(str);
+        return obj;
+      });
+    */
+
+    data.forEach((contact, index, arr) => {
       const str = '' + index +
-          Object.values(obj).reduce((accum, curr) => (accum + curr), '');
-      obj.id = 'id' + hashCode(str);
-      return obj;
+          Object.values(contact).reduce((accum, curr) => (accum + curr), '');
+      arr[index].id = 'id' + hashCode(str);
     });
 
 
