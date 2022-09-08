@@ -1,11 +1,10 @@
 'use strict';
 
-
 // const data = []; // в отдельном ящике data.js
 
 {
   /**
- * * Returns a hash code from a string use it for hosh contocts
+ * Returns a hash code from a string use it for hosh contocts
  * @param  {String} str The string to hash.
  * @return {Number}    A 32bit integer
  * @see http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
@@ -20,7 +19,6 @@
     return Math.abs(hash);
   };
 
-
   // * getDataContact
   // получить контакт из массива data by id
   const getDataContact = (id) => {
@@ -29,7 +27,6 @@
     // console.log('contact: ', contact);
     return contacts[0];
   };
-
 
   // * deteleDataContact
   const deteleDataContact = (id) => {
@@ -40,7 +37,6 @@
       }
     });
   };
-
 
   const createContainer = () => {
     const container = document.createElement('div');
@@ -285,13 +281,11 @@
         return obj;
       });
     */
-
     data.forEach((contact, index, arr) => {
       const str = '' + index +
           Object.values(contact).reduce((accum, curr) => (accum + curr), '');
       arr[index].id = 'id' + hashCode(str);
     });
-
 
     const {
       list,
@@ -303,10 +297,10 @@
       form,
     } = phonebook;
 
-    // todo функционал here
+    
+    // todo ФУНКЦИОНАЛ ЗДЕСЬ
 
     const allRow = renderContacts(list, data);
-
     hoverRow(allRow, logo);
 
     // можно использовать объект событий
@@ -364,12 +358,9 @@
     // ? клик по оверлею 2й вариант
     formOverlay.addEventListener('click', e => {
       const target = e.target;
-      // отрабатываем клик по кнокпе CLOSE
-      if (target === closeBtn) {
-        formOverlay.classList.remove('is-visible');
-        return;
-      }
-      if (target === formOverlay) {
+      // отрабатываем клик по кнокпе CLOSE и по оверлею
+      if (target === closeBtn ||
+        target === formOverlay) {
         formOverlay.classList.remove('is-visible');
         return;
       }
