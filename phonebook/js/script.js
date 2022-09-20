@@ -3,12 +3,7 @@
 // const data = []; // в отдельном ящике data.js
 
 {
-  /**
- * Returns a hash code from a string use it for hosh contocts
- * @param  {String} str The string to hash.
- * @return {Number}    A 32bit integer
- * @see http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
- */
+  // * Returns a hash code from a string use it for hosh contocts
   const hashCode = (str) => {
     let hash = 0;
     for (let i = 0, len = str.length; i < len; i++) {
@@ -297,7 +292,7 @@
       form,
     } = phonebook;
 
-    
+
     // todo ФУНКЦИОНАЛ ЗДЕСЬ
 
     const allRow = renderContacts(list, data);
