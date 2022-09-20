@@ -3,12 +3,7 @@
 // const data = []; // в отдельном ящике data.js
 
 {
-  /**
- * Returns a hash code from a string use it for hosh contocts
- * @param  {String} str The string to hash.
- * @return {Number}    A 32bit integer
- * @see http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
- */
+  // * возвращает hashCode по строке str
   const hashCode = (str) => {
     let hash = 0;
     for (let i = 0, len = str.length; i < len; i++) {
@@ -16,10 +11,29 @@
       hash = (hash << 5) - hash + chr;
       hash |= 0; // Convert to 32bit integer
     }
-    return Math.abs(hash);
+    return Math.abs(hash) + '';
+    // return Math.abs(hash);
   };
 
-  // * getDataContact
+  // // * возвращает сгенерированый hash id для контакта
+  // const getContactHashID = (contact = {}) => {
+  //   console.log('contact: ', contact);
+  //   return '';
+  // };
+
+  // * генерирует добавляет .id для каждого контакта объкта в массиве data
+  const generateDataContactsHashIDs = (data) => {
+    console.log('генерируем ключи id');
+    return data.map((contact, index) => {
+      console.log('contact: ', contact);
+      contact.id = 'id' + Object.values(contact)
+          .reduce((accum, current) => {
+            console.log(current);
+            return (`${accum}_${hashCode(current)}`);
+          }, '');
+    });
+  };
+
   // получить контакт из массива data by id
   const getDataContact = (id) => {
     // filter фильтрует элементы выдает массив контактов с данным id
@@ -28,9 +42,8 @@
     return contacts[0];
   };
 
-  // * deteleDataContact
+  // удалить контакт из массива by id
   const deteleDataContact = (id) => {
-    // удалить этот элем из массива
     data.forEach((contact, index, arr) => {
       if (contact.id === id) {
         data.splice(index, 1);
@@ -91,6 +104,7 @@
   const createTable = (data) => {
     const table = document.createElement('table');
     table.classList.add('table', 'table-striped');
+    // генерим заголовок таблицы
     const thead = document.createElement('thead');
     thead.insertAdjacentHTML('beforeend', `
       <tr>
@@ -100,7 +114,7 @@
         <th>Телефон</th>
       </tr>
     `);
-
+    // генерим и возращаем ссылку на тело таблицы
     const tbody = document.createElement('tbody');
     table.append(thead, tbody);
     table.thead = thead;
@@ -124,6 +138,7 @@
       },
     ]).btns[0];
     form.prepend(closeBtn);
+    // сама форма в модальном окне
     form.insertAdjacentHTML('beforeend', `
       <div class="form-group">
         <label class="form-lable col-12" for="name">Имя</label>
@@ -213,7 +228,14 @@
 
   const createRow = ({name: firstname, surname, phone, id}) => {
     const tr = document.createElement('tr');
-    tr.id = id; // id ряда конткта для идентификации
+    // ! проверка на undefined
+    if (id) {
+      tr.id = id; // id ряда конткта для идентификации
+      console.log('id: ', id, '\t-> tel:', phone);
+    } else {
+      tr.id = 'tr' + hashCode(firstname) + hashCode(surname) + hashCode(phone);
+      console.log('id не существует: ', id, tr.id);
+    }
     tr.classList.add('contact');
     tr.title = `Контакт ${surname} ${firstname}`;
 
@@ -314,53 +336,68 @@
     });
   };
 
-  // добавляем новый контакт
+  // добавляем новый контакт в массив data
   const addContactData = (newContact) => {
     // todo добавлять хеш id для контакта
     data.push(newContact);
   };
 
-  // добавляем новую строку с контактом в таблицу
+  // добавляем новую строку с контактом в тело таблицы table.tbody
   const addContactPage = (newContact, list) => {
     list.append(createRow(newContact));
   };
 
-  const formControl = ({form, list, closeModal,}) => {
+  const formControl = ({form, list, closeModal}) => {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      console.log(e.target);
+      // console.log(e.target);
       const formData = new FormData(e.target); // данные из формы
       // const name = form.name?.value;
       // const surname = form.surname?.value;
       // const phone = form.phone?.value;
       const newContact = Object.fromEntries(formData);
-      console.log('newContact: ', newContact);
+      // console.log('newContact: ', newContact);
       // const newContact = {
       //   name,
       //   surname,
       //   phone,
       // };
+
+      // const str = Object.values(newContact)
+      //    .reduce((accum, curr) => (accum + curr), '');
+      newContact.id = 'new' +
+        hashCode(Object.values(newContact)
+            .reduce((accum, curr) => (accum + curr),
+                ''),
+        );
+      console.log('newContact: ', newContact);
+
       addContactData(newContact);
       addContactPage(newContact, list);
       // list.append(createRow(newContact));
       // list.append(createRow({name, surname, phone,}));
-      console.log('data: ', data);
+      // console.log('data: ', data);
       form.reset();
       // form.parentElement.classList.remove('is-visible');
       closeModal();
     });
   };
 
+
   // * MAIN INIT *
   const init = (selectorApp, title) => {
     const app = document.querySelector(selectorApp);
     // const phonebook = renderPhonebook(app, title);
 
+    // todo func
     data.forEach((contact, index, arr) => {
-      const str = '' + index +
-          Object.values(contact).reduce((accum, curr) => (accum + curr), '');
-      arr[index].id = 'id' + hashCode(str);
+      arr[index].id = 'id' + Object.values(contact)
+          .reduce((accum, curr) => (`${accum}_${hashCode(curr)}`), '');
+      // arr[index].id = 'id' + hashCode(str);
+      // arr[index].id = 'id' + str;
     });
+
+    console.log(data);
 
     const {
       list,
@@ -382,8 +419,8 @@
       btnAdd,
       closeBtn,
     });
-    deleteControl({btnDel, list,});
-    formControl({form, list, closeModal,});
+    deleteControl({btnDel, list});
+    formControl({form, list, closeModal});
   };
 
 
