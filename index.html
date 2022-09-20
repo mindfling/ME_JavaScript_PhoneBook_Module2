@@ -6,25 +6,60 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Телефонная книга</title>
+  <title>Тест М2 Урок8 DataStorage - Телефонная книга</title>
   <link rel="icon" href="img/icon.svg">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="phonebook/css/style.css">
 
   <script src="data.js"></script>
-  <script src="phonebook/js/script.js" defer></script>
+  <!-- <script src="phonebook/js/script.js" defer></script> -->
+  <script src="phonebook/js/testStorage.js" defer></script>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const init = window.phonebookInit;
-      init('#app', 'Мои Контакты');
-    })
+    // document.addEventListener('DOMContentLoaded', () => {
+    //   const init = window.phonebookInit;
+    //   init('#app', 'Мои Контакты');
+    // })
   </script>
 </head>
 <body>
-
   <div id="app"></div>
 
+  <div class="demo">
+
+    <div class="demo__storage demo__storage_session storage storage_session">
+      <h2 class="demo__title">
+        sessionStorage
+      </h2>
+      <div class="demo__color">
+        <label for="session-color-pick" class="demo__color-label">color</label>
+        <input type="color" class="demo__color-pick" id="session-color-pick">
+      </div>
+      <div class="demo__font">
+        <label for="session-font" class="demo__font-label">font size</label>
+        <input type="number" class="demo__font-input" id="session-font">
+      </div>
+      <p class="demo__text demo__text_session">Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti nihil dolores, quia nam, quod, qui quidem sed numquam nobis dignissimos enim? Doloribus dolorem ex reiciendis eos perspiciatis, ducimus eaque delectus?</p>
+      <button class="btn btn-primary demo__session demo__session_reset" type="button">Reset session</button>
+    </div>
+
+    <div class="demo__storage demo__storage_local storage storage_local">
+      <h2 class="demo__title">
+        localStorage
+      </h2>
+      <div class="demo__color">
+        <label for="local-color-pick" class="demo__color-label">color</label>
+        <input type="color" class="demo__color-pick" id="local-color-pick">
+      </div>
+      <div class="demo__font">
+        <label for="local-font" class="demo__font-label">font size</label>
+        <input type="number" class="demo__font-input" id="local-font">
+      </div>
+      <p class="demo__text demo__text_local">Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti nihil dolores, quia nam, quod, qui quidem sed numquam nobis dignissimos enim? Doloribus dolorem ex reiciendis eos perspiciatis, ducimus eaque delectus?</p>
+      <button class="btn btn-success demo__local demo__local_reset" type="button">Reset local</button>
+    </div>
+    
+  </div>
 </body>
 </html>

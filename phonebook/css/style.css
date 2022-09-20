@@ -140,3 +140,19 @@ body {
 .table__cell_head:hover {
   opacity: 0.8;
 }
+
+
+
+.demo {
+  display: block;
+  padding: 10px;
+}
+
+.demo__storage {
+  display: block;
+  border: 1px solid gray;
+  padding: 10px 15px;
+}
+.demo__storage_session {
+  margin-bottom: 10px;
+}

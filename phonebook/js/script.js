@@ -4,12 +4,8 @@
 
 {
   let data = [];
-  /**
- * Returns a hash code from a string use it for hosh contocts
- * @param  {String} str The string to hash.
- * @return {Number}    A 32bit integer
- * @see http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
- */
+
+  // * Returns a hash code from a string use it for hosh contocts
   const hashCode = (str) => {
     let hash = 0;
     for (let i = 0, len = str.length; i < len; i++) {
@@ -152,9 +148,9 @@
     thead.insertAdjacentHTML('beforeend', `
       <tr class="table__row_head">
         <th class="delete">Удалить</th>
-        <th class="table__cell_head" data-sortby="by-name">Имя</th>
-        <th class="table__cell_head" data-sortby="by-surname">Фамилия</th>
-        <th class="table__cell_head" data-sortby="by-phone">Телефон</th>
+        <th class="table__cell_head" data-sortby="by-name" title="Сортировать по Имени">Имя</th>
+        <th class="table__cell_head" data-sortby="by-surname" title="Сортировать по Фамилии">Фамилия</th>
+        <th class="table__cell_head" data-sortby="by-phone" title="Сортировать по номеру телефона">Телефон</th>
       </tr>
     `);
 
@@ -345,6 +341,20 @@
           Object.values(obj).reduce((accum, curr) => (accum + curr), '');
       obj.id = 'id' + hashCode(str);
       return obj;
+    });
+
+    const dataJSON = JSON.stringify(data);
+    console.log('dataJSON: ', dataJSON);
+
+    sessionStorage.setItem('phone1', dataJSON);
+
+
+    data.forEach((contact, index, arr) => {
+      const contactID = contact.id;
+      console.log('contact.id: ', index, contactID);
+      const contactJSON = JSON.stringify(contact);
+      console.log('contactJSON: ', contactJSON);
+      localStorage.setItem('phone_' + index + '_' + contactID, contactJSON);
     });
 
 
