@@ -26,7 +26,7 @@
   const makeDataContactsHashes = (data) => {
     console.log('генерируем ключи id');
     return data.map((contact, index) => {
-      console.log('contact: ', contact);
+      // console.log('contact: ', contact);
       contact.id = getContactHash(contact);
       // contact.id = 'id' + Object.values(contact)
       //     .reduce((accum, current) => {
@@ -365,13 +365,7 @@
       //   phone,
       // };
 
-      // const str = Object.values(newContact)
-      //    .reduce((accum, curr) => (accum + curr), '');
-      newContact.id = 'new' +
-        hashCode(Object.values(newContact)
-            .reduce((accum, curr) => (accum + curr),
-                ''),
-        );
+      newContact.id = getContactHash(newContact);
       console.log('newContact: ', newContact);
 
       addContactData(newContact);
@@ -392,12 +386,14 @@
     // const phonebook = renderPhonebook(app, title);
 
     // todo func
-    data.forEach((contact, index, arr) => {
-      arr[index].id = getContactHash(contact);
-      // arr[index].id = 'id' + Object.values(contact).reduce((accum, curr) => (`${accum}_${hashCode(curr)}`), '');
-      // arr[index].id = 'id' + hashCode(str);
-      // arr[index].id = 'id' + str;
-    });
+    makeDataContactsHashes(data);
+
+    // data.forEach((contact, index, arr) => {
+    //   arr[index].id = getContactHash(contact);
+    //   // arr[index].id = 'id' + Object.values(contact).reduce((accum, curr) => (`${accum}_${hashCode(curr)}`), '');
+    //   // arr[index].id = 'id' + hashCode(str);
+    //   // arr[index].id = 'id' + str;
+    // });
 
     // data.forEach((contact, index, arr) => {
     //   arr[index].id = 'id' + Object.values(contact)
@@ -423,7 +419,7 @@
 
     const allRow = renderContacts(list, data);
     hoverRow(allRow, logo);
-    const {openModal, closeModal} = modalControl({
+    const {closeModal} = modalControl({
       formOverlay,
       btnAdd,
       closeBtn,
