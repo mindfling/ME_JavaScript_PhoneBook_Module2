@@ -11,26 +11,28 @@
       hash = (hash << 5) - hash + chr;
       hash |= 0; // Convert to 32bit integer
     }
-    return Math.abs(hash) + '';
-    // return Math.abs(hash);
+    return Math.abs(hash);
   };
 
-  // // * возвращает сгенерированый hash id для контакта
-  // const getContactHashID = (contact = {}) => {
-  //   console.log('contact: ', contact);
-  //   return '';
-  // };
+  // * возвращает сгенерированый hash id для контакта
+  const getContactHash = (contact = {}) => {
+    const hashID = Object.values(contact)
+        .reduce((accum, curr) => `${accum}x${hashCode(curr).toString(16)}`,
+            'id');
+    return hashID;
+  };
 
   // * генерирует добавляет .id для каждого контакта объкта в массиве data
-  const generateDataContactsHashIDs = (data) => {
+  const makeDataContactsHashes = (data) => {
     console.log('генерируем ключи id');
     return data.map((contact, index) => {
       console.log('contact: ', contact);
-      contact.id = 'id' + Object.values(contact)
-          .reduce((accum, current) => {
-            console.log(current);
-            return (`${accum}_${hashCode(current)}`);
-          }, '');
+      contact.id = getContactHash(contact);
+      // contact.id = 'id' + Object.values(contact)
+      //     .reduce((accum, current) => {
+      //       console.log(current);
+      //       return (`${accum}_${hashCode(current)}`);
+      //     }, '');
     });
   };
 
@@ -391,11 +393,18 @@
 
     // todo func
     data.forEach((contact, index, arr) => {
-      arr[index].id = 'id' + Object.values(contact)
-          .reduce((accum, curr) => (`${accum}_${hashCode(curr)}`), '');
+      arr[index].id = getContactHash(contact);
+      // arr[index].id = 'id' + Object.values(contact).reduce((accum, curr) => (`${accum}_${hashCode(curr)}`), '');
       // arr[index].id = 'id' + hashCode(str);
       // arr[index].id = 'id' + str;
     });
+
+    // data.forEach((contact, index, arr) => {
+    //   arr[index].id = 'id' + Object.values(contact)
+    //       .reduce((accum, curr) => (`${accum}_${hashCode(curr)}`), '');
+    //   // arr[index].id = 'id' + hashCode(str);
+    //   // arr[index].id = 'id' + str;
+    // });
 
     console.log(data);
 
