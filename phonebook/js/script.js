@@ -21,26 +21,6 @@
             'id');
     return hashID;
   };
-  /*
-id:  id_1ecaaa7_45919168_5cc27a08 	-> tel: +79514545454 script.js:236:15
-id:  id_3ba957cf_29dfbeb8_3877df4 	-> tel: +79999999999 script.js:236:15
-id:  id_3c290e94_396d249b_26fc1eec 	-> tel: +79800252525 script.js:236:15
-id:  id_1f04fd0_396d249b_d5da5f9 	-> tel: +79876543210 script.js:236:15
-id:  id_3222064f_4baa628b_6bab5e87 	-> tel: +79001234567 script.js:236:15
-*/
-  /*
-id:  0xxupal7x12p34b8x1ec4ug8 	-> tel: +79514545454 script.js:245:15
-id:  0xxupal7xktvflox1oevfk 	-> tel: +79999999999 script.js:245:15
-id:  0xxupal7xsmq94rxjfo7nc 	-> tel: +79800252525 script.js:245:15
-id:  0xxupal7xsmq94rx6lr9fp 	-> tel: +79876543210 script.js:245:15
-id:  0xxp241ifx15qkokbx1lqmnk7 	-> tel: +79001234567
-
-id:  idxupal7x12p34b8x1ec4ug8 	-> tel: +79514545454 script.js:250:15
-id:  idxtqilufxktvflox1oevfk 	-> tel: +79999999999 script.js:250:15
-id:  idxu2i3kkxsmq94rxjfo7nc 	-> tel: +79800252525 script.js:250:15
-id:  idxv0jugxsmq94rx6lr9fp 	-> tel: +79876543210 script.js:250:15
-id:  idxp241ifx15qkokbx1lqmnk7 	-> tel: +79001234567
-*/
 
   // * генерирует добавляет .id для каждого контакта объкта в массиве data
   const makeDataContactsHashes = (data) => data.map((contact, index) => {
@@ -240,13 +220,13 @@ id:  idxp241ifx15qkokbx1lqmnk7 	-> tel: +79001234567
 
   const createRow = ({name: firstname, surname, phone, id}) => {
     const tr = document.createElement('tr');
-    // проверка на undefined
+    // проверка на undefined на существование поля
     if (id) {
-      tr.id = id; // id ряда конткта для идентификации
-      console.log('id: ', id, '\t-> tel:', phone);
+      tr.id = id;
+      // этот id ряда конткта для идентификации
     } else {
       tr.id = 'tr' + hashCode(firstname) + hashCode(surname) + hashCode(phone);
-      console.log('id не существует: ', id, tr.id);
+      // такой id не существует
     }
     tr.classList.add('contact');
     tr.title = `Контакт ${surname} ${firstname}`;
@@ -330,7 +310,7 @@ id:  idxp241ifx15qkokbx1lqmnk7 	-> tel: +79001234567
       const dellCellAll = list.parentElement.querySelectorAll('.delete');
       dellCellAll.forEach(del => {
         // todo close only .is-visible
-        del.classList.toggle('is-visible');
+        del.classList.add('is-visible');
       });
     });
 
