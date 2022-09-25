@@ -1,6 +1,9 @@
 'use strict';
 
-/** 
+// ** Добавил кнопки Редактировать
+// todo осталось сделать функционал при нажатии на кнопки редактировать :)
+
+/**
  * * Returns a hash code from a string use it for hosh contocts
  * @param  {String} str The string to hash.
  * @return {Number}    A 32bit integer
@@ -9,12 +12,12 @@
 const hashCode = (str) => {
   let hash = 0;
   for (let i = 0, len = str.length; i < len; i++) {
-      let chr = str.charCodeAt(i);
-      hash = (hash << 5) - hash + chr;
-      hash |= 0; // Convert to 32bit integer
+    const chr = str.charCodeAt(i);
+    hash = (hash << 5) - hash + chr;
+    hash |= 0; // Convert to 32bit integer
   }
   return Math.abs(hash);
-}
+};
 
 // * оригинальные данные
 const origin = [
@@ -45,22 +48,23 @@ let data = JSON.parse(JSON.stringify(origin));
 console.log('data: ', data);
 
 // * обработка хэшей добавляем в массив объектов хэш
-  data = data.map((obj, index) => {
-    let str = index.toString() + Object.values(obj).reduce((accum, curr) => (accum + curr), '');
-    obj.id = 'id' + hashCode(str);
-    obj.title = 'title' + str;
-    return obj;
-  });
-  
+data = data.map((obj, index) => {
+  const str = index.toString() +
+      Object.values(obj).reduce((accum, curr) => (accum + curr), '');
+  obj.id = 'id' + hashCode(str);
+  obj.title = 'title' + str;
+  return obj;
+});
+
 
 // * наш модуль приложение
 {
-  /** 
+  /**
    * * createElem
    * todo функция взята из интенсива для создания елемента
    * @param {String} tag тег элемента
    * @param {Object} attr объект аттрибутов
-   * @param {String} title строка текстовое содержимое елемента
+   * @param {String} text строка текстовое содержимое елемента
    * @return {DOMElement} возвращает созданный елемент
    */
   const createElem = (tag, attr = {}, text) => {
@@ -150,6 +154,7 @@ console.log('data: ', data);
     return table;
   };
 
+  // todo delete comments !
   /*
   // * createForm Максим
   const createForm = (title) => {
@@ -162,15 +167,15 @@ console.log('data: ', data);
       <button class="close" type="button"></button>
 
       <h2 class="form-title">${formTitle}</h2>
-      
+
       <div class="form-group row">
         <!-- <label class="form-lable col-sm-4" for="name">Имя</label> -->
         <div class="col-sm-12">
-          <input class="form-input form-input-name form-control" 
+          <input class="form-input form-input-name form-control"
             name="name" placeholder="Введите имя" id="name" type="text" required>
         </div>
       </div>
-      
+
       <div class="form-group row">
         <!-- <label class="form-lable col-sm-4" for="surname">Фамилия</label> -->
         <div class="col-sm-10">
@@ -219,7 +224,6 @@ console.log('data: ', data);
   const getDataContact = (id) => {
     // filter фильтрует элементы выдает массив контактов с данным id
     const contact = data.filter(contact => (contact.id === id));
-    // console.log('contact: ', contact);
     return contact[0];
   };
 
@@ -230,15 +234,18 @@ console.log('data: ', data);
     data.forEach((contact, index, arr) => {
       if (contact.id === id) {
         data.splice(index, 1);
-      };
+      }
     });
   };
 
+  // eslint-disable-next-line valid-jsdoc
   /**
    * * createFormDyn
    * todo своя функция динамически генерирует форму
-   * */ 
-  const createFormDyn = (titleText, {dataid, firstname, surname, phone} = {}, ) => {
+   * */
+  const createFormDyn = (titleText,
+      {dataid, firstname, surname, phone} = {},
+  ) => {
     // обработка id контакта если id существует
     if (dataid) {
       const result = getDataContact(dataid);
@@ -270,7 +277,7 @@ console.log('data: ', data);
     const closeBtn = createElem('button', {
       className: 'close',
       type: 'button',
-      title: "Закрыть форму",
+      title: 'Закрыть форму',
     });
 
     // строка ввода имени
@@ -345,7 +352,7 @@ console.log('data: ', data);
       },
     ]);
 
-    form.append(closeBtn, title, formGroupName, formGroupSurname, formGroupPhone, buttonGroupForm.btnWrapper,);
+    form.append(closeBtn, title, formGroupName, formGroupSurname, formGroupPhone, buttonGroupForm.btnWrapper);
 
     form.closeBtn = closeBtn;
     form.formTitle = title;
@@ -361,7 +368,7 @@ console.log('data: ', data);
       title,
       form,
     };
-  }
+  };
 
 
   // * createFooter
@@ -395,7 +402,7 @@ console.log('data: ', data);
       },
     ]);
     const table = createTable();
-    const form = createFormDyn('Добавить',);
+    const form = createFormDyn('Добавить');
     // const form = createFormDyn(
     //   'Редактируем этот',
     //   {
@@ -487,7 +494,7 @@ console.log('data: ', data);
         logo.textContent = text;
       });
     });
-    return ;
+    return;
   };
 
 
@@ -530,7 +537,6 @@ console.log('data: ', data);
             cellDelete.classList.add('is-visible');
           });
         }
-
       },
     };
 
@@ -539,7 +545,7 @@ console.log('data: ', data);
     // кнопка Удалить
     btnDel.addEventListener('click', objEventBtns);
 
-    
+
     // при клике на оверлай скрывем модалку
     console.log('form.closeBtn: ', form.closeBtn);
     formOverlay.addEventListener('click', (event) => {
@@ -560,11 +566,12 @@ console.log('data: ', data);
         };
 
         // ** добавим новый контакт
-        contact.id = 'id' + hashCode(data.length.toString() + Object.values(contact).reduce((accum, curr) => (accum + curr), ''));
+        contact.id = 'id' + hashCode(data.length.toString() +
+            Object.values(contact).reduce((accum, curr) => (accum + curr), ''));
         data.push(contact);
         listTbody.append(createRow(contact));
 
-        // очистить форму 
+        // очистить форму
         form.inputName.value = '';
         form.inputSurname.value = '';
         form.inputPhone.value = '';
@@ -572,7 +579,7 @@ console.log('data: ', data);
         formOverlay.classList.remove('is-visible');
         return;
       }
-      
+
       // * кнопка Reset
       if (target === form.btnReset) {
         // отключить действие поумолчанию при нажатии на клавшу reset формы
@@ -612,9 +619,8 @@ console.log('data: ', data);
           listTbody.append(document.createElement('div'));
           renderContacts(listTbody, data);
         });
-
       }
-    })
+    });
 
     // обработка событий клик по Удалить del-icon
     listTbody.addEventListener('click', e => {
