@@ -501,14 +501,23 @@ data = data.map((obj, index) => {
   // * ! ЗАПУСК ПРИЛОЖНИЯ ЧЕРЕЗ init() !!!
   const init = (selectorApp, title) => {
     const app = document.querySelector(selectorApp);
-    const phonebook = renderPhonebook(app, title);
+    // const phonebook = renderPhonebook(app, title);
+    // const {listTbody, logo, btnAdd, btnDel, formOverlay, form, table} = phonebook;
 
     // деструктуризируем переменные из объекта
-    const {listTbody, logo, btnAdd, btnDel, formOverlay, form, table} = phonebook;
-    // form.formTitle.textContent = 'Kh мой заголовок'; // todo
+    const {
+      listTbody,
+      logo,
+      btnAdd,
+      btnDel,
+      formOverlay,
+      form,
+      table,
+    } = renderPhonebook(app, title);
+
+    // form.formTitle.textContent = 'Kh мой заголовок';
     // console.log('renderPhonebook: form: ', form);
     // console.log('form.formTitle: ', form.formTitle);
-
 
     const allRow = renderContacts(listTbody, data);
     hoverRow(allRow, logo);
@@ -516,26 +525,41 @@ data = data.map((obj, index) => {
     // обработчик событий кликов на
     // * btnAdd и btnDel
     const objEventBtns = {
+      isShown: false, // в начале закрыты все ячейки с кнопками .delete
       handleEvent(event) {
         const target = event.target;
+        const cellDeleteAll = table.querySelectorAll('.delete');
 
+        // * при нажатии на кнопку Добавить btnAdd
         if (target === btnAdd) {
           // здесь делаем видимым оверлай и модалку
           formOverlay.classList.add('is-visible');
 
-          // здесь скрываем кнопки .delete
-          const cellDeleteAll = table.querySelectorAll('.delete');
+          // здесь скрываем все кнопки .delete
+          // const cellDeleteAll = table.querySelectorAll('.delete');
+          this.isShown = false;
           cellDeleteAll.forEach(cellDelete => {
-            // cellDelete.classList.toggle('is-visible');
             cellDelete.classList.remove('is-visible');
           });
+
+        // * при нажатии на кнопку Удалить btnDel
         } else if (target === btnDel) {
           // здесь показываем все кнопки .delete
-          const cellDeleteAll = table.querySelectorAll('.delete');
-          cellDeleteAll.forEach(cellDelete => {
-            // cellDelete.classList.toggle('is-visible');
-            cellDelete.classList.add('is-visible');
-          });
+          // const cellDeleteAll = table.querySelectorAll('.delete');
+
+          if (this.isShown) {
+            // если видимые то скрываем
+            this.isShown = false;
+            cellDeleteAll.forEach(cellDelete => {
+              cellDelete.classList.remove('is-visible');
+            });
+          } else {
+            // если были скрытые то показываем
+            this.isShown = true;
+            cellDeleteAll.forEach(cellDelete => {
+              cellDelete.classList.add('is-visible');
+            });
+          }
         }
       },
     };
@@ -547,7 +571,6 @@ data = data.map((obj, index) => {
 
 
     // при клике на оверлай скрывем модалку
-    console.log('form.closeBtn: ', form.closeBtn);
     formOverlay.addEventListener('click', (event) => {
       const target = event.target;
       // todo отрабатываем клик по кнокпе close
