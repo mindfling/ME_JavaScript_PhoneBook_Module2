@@ -17,30 +17,40 @@
   // * возвращает сгенерированый hash id для контакта
   const getContactHash = (contact = {}) => {
     const hashID = Object.values(contact)
-        .reduce((accum, curr) => `${accum}x${hashCode(curr).toString(16)}`,
+        .reduce((accum, curr) => `${accum}x${hashCode(curr).toString(32)}`,
             'id');
     return hashID;
   };
+  /*
+id:  id_1ecaaa7_45919168_5cc27a08 	-> tel: +79514545454 script.js:236:15
+id:  id_3ba957cf_29dfbeb8_3877df4 	-> tel: +79999999999 script.js:236:15
+id:  id_3c290e94_396d249b_26fc1eec 	-> tel: +79800252525 script.js:236:15
+id:  id_1f04fd0_396d249b_d5da5f9 	-> tel: +79876543210 script.js:236:15
+id:  id_3222064f_4baa628b_6bab5e87 	-> tel: +79001234567 script.js:236:15
+*/
+  /*
+id:  0xxupal7x12p34b8x1ec4ug8 	-> tel: +79514545454 script.js:245:15
+id:  0xxupal7xktvflox1oevfk 	-> tel: +79999999999 script.js:245:15
+id:  0xxupal7xsmq94rxjfo7nc 	-> tel: +79800252525 script.js:245:15
+id:  0xxupal7xsmq94rx6lr9fp 	-> tel: +79876543210 script.js:245:15
+id:  0xxp241ifx15qkokbx1lqmnk7 	-> tel: +79001234567
+
+id:  idxupal7x12p34b8x1ec4ug8 	-> tel: +79514545454 script.js:250:15
+id:  idxtqilufxktvflox1oevfk 	-> tel: +79999999999 script.js:250:15
+id:  idxu2i3kkxsmq94rxjfo7nc 	-> tel: +79800252525 script.js:250:15
+id:  idxv0jugxsmq94rx6lr9fp 	-> tel: +79876543210 script.js:250:15
+id:  idxp241ifx15qkokbx1lqmnk7 	-> tel: +79001234567
+*/
 
   // * генерирует добавляет .id для каждого контакта объкта в массиве data
-  const makeDataContactsHashes = (data) => {
-    console.log('генерируем ключи id');
-    return data.map((contact, index) => {
-      // console.log('contact: ', contact);
-      contact.id = getContactHash(contact);
-      // contact.id = 'id' + Object.values(contact)
-      //     .reduce((accum, current) => {
-      //       console.log(current);
-      //       return (`${accum}_${hashCode(current)}`);
-      //     }, '');
-    });
-  };
+  const makeDataContactsHashes = (data) => data.map((contact, index) => {
+    contact.id = getContactHash(contact);
+  });
 
   // получить контакт из массива data by id
   const getDataContact = (id) => {
     // filter фильтрует элементы выдает массив контактов с данным id
     const contacts = data.filter(contact => (contact.id === id));
-    // console.log('contact: ', contact);
     return contacts[0];
   };
 
@@ -230,7 +240,7 @@
 
   const createRow = ({name: firstname, surname, phone, id}) => {
     const tr = document.createElement('tr');
-    // ! проверка на undefined
+    // проверка на undefined
     if (id) {
       tr.id = id; // id ряда конткта для идентификации
       console.log('id: ', id, '\t-> tel:', phone);
@@ -319,7 +329,7 @@
     btnDel.addEventListener('click', () => {
       const dellCellAll = list.parentElement.querySelectorAll('.delete');
       dellCellAll.forEach(del => {
-        // del.classList.add('is-visible');
+        // todo close only .is-visible
         del.classList.toggle('is-visible');
       });
     });
@@ -352,29 +362,16 @@
   const formControl = ({form, list, closeModal}) => {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      // console.log(e.target);
       const formData = new FormData(e.target); // данные из формы
-      // const name = form.name?.value;
-      // const surname = form.surname?.value;
-      // const phone = form.phone?.value;
       const newContact = Object.fromEntries(formData);
-      // console.log('newContact: ', newContact);
-      // const newContact = {
-      //   name,
-      //   surname,
-      //   phone,
-      // };
 
       newContact.id = getContactHash(newContact);
       console.log('newContact: ', newContact);
 
       addContactData(newContact);
       addContactPage(newContact, list);
-      // list.append(createRow(newContact));
-      // list.append(createRow({name, surname, phone,}));
-      // console.log('data: ', data);
+
       form.reset();
-      // form.parentElement.classList.remove('is-visible');
       closeModal();
     });
   };
@@ -383,27 +380,7 @@
   // * MAIN INIT *
   const init = (selectorApp, title) => {
     const app = document.querySelector(selectorApp);
-    // const phonebook = renderPhonebook(app, title);
-
-    // todo func
     makeDataContactsHashes(data);
-
-    // data.forEach((contact, index, arr) => {
-    //   arr[index].id = getContactHash(contact);
-    //   // arr[index].id = 'id' + Object.values(contact).reduce((accum, curr) => (`${accum}_${hashCode(curr)}`), '');
-    //   // arr[index].id = 'id' + hashCode(str);
-    //   // arr[index].id = 'id' + str;
-    // });
-
-    // data.forEach((contact, index, arr) => {
-    //   arr[index].id = 'id' + Object.values(contact)
-    //       .reduce((accum, curr) => (`${accum}_${hashCode(curr)}`), '');
-    //   // arr[index].id = 'id' + hashCode(str);
-    //   // arr[index].id = 'id' + str;
-    // });
-
-    console.log(data);
-
     const {
       list,
       logo,
@@ -416,7 +393,6 @@
 
 
     // todo ФУНКЦИОНАЛ ЗДЕСЬ
-
     const allRow = renderContacts(list, data);
     hoverRow(allRow, logo);
     const {closeModal} = modalControl({
