@@ -2,7 +2,32 @@
 
 // const data = []; // в отдельном ящике data.js
 
+let data = [];
+const KEY = 'phone-test';
+
 {
+  // * сохранение в localStorage
+  const getStorage = (storageKey) => {
+    console.log('read local storage');
+    console.log('storageKey: ', storageKey);
+    let result = [];
+    result = localStorage.getItem(KEY);
+    console.log('result: ', result);
+    return JSON.parse(result);
+  };
+
+  const setStorage = (storageKey, data) => {
+    console.log('set local storage', data);
+    localStorage.setItem(storageKey, data);
+  };
+
+  const removeStorage = (storageKey, id) => {
+    console.log('remove storageKey: ', storageKey);
+    console.log('remove id', id, 'from local storage');
+  };
+
+
+
   // * возвращает hashCode по строке str
   const hashCode = (str) => {
     let hash = 0;
@@ -27,6 +52,27 @@
     contact.id = getContactHash(contact);
   });
 
+
+  const initStorage = () => {
+    console.log(data);
+    const localStorage = getStorage(KEY);
+
+    console.log('localStorage: ', localStorage);
+    data = localStorage;
+
+    if (localStorage) {
+      console.log('storage is full of', localStorage);
+    } else {
+      console.log('storage is empty\ninit Storage');
+      setStorage(KEY, JSON.stringify(originData));
+      data = getStorage(KEY);
+    }
+
+    makeDataContactsHashes(data);
+    console.log('data: ', data);
+  };
+
+
   // получить контакт из массива data by id
   const getDataContact = (id) => {
     // filter фильтрует элементы выдает массив контактов с данным id
@@ -41,7 +87,10 @@
         data.splice(index, 1);
       }
     });
+    // удалить из data
+    removeStorage(KEY, id);
   };
+
 
   const createContainer = () => {
     const container = document.createElement('div');
@@ -273,9 +322,11 @@
     return;
   };
 
+
   // функционал работы с модальной формой
   const modalControl = ({btnAdd, formOverlay, closeBtn, objEvent}) => {
     console.log('modal objEvent: ', objEvent);
+
     // открыть модалку
     const openModal = () => {
       formOverlay.classList.add('is-visible');
@@ -325,7 +376,8 @@
         const dataID = targetRow.id; // data ID contact
         deteleDataContact(dataID);
         console.log(data); // выводим в консоль то что у нас вышло
-        targetRow.remove();
+        targetRow.remove(); // удаляем строку из DOM
+
         return;
       }
     });
@@ -363,6 +415,11 @@
   // * MAIN INIT *
   const init = (selectorApp, title) => {
     const app = document.querySelector(selectorApp);
+
+    initStorage();
+    const data = getStorage();
+    console.log('initial data: ', data);
+
     makeDataContactsHashes(data);
     const {
       list,

@@ -1,7 +1,7 @@
 'use strict';
 // список массив объектов данных пользователей
 
-const data = [
+const originData = [
   {
     name: 'Иван',
     surname: 'Петров',
