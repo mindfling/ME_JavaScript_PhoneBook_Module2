@@ -273,9 +273,9 @@
     return;
   };
 
-
   // функционал работы с модальной формой
   const modalControl = ({btnAdd, formOverlay, closeBtn, objEvent}) => {
+    console.log('modal objEvent: ', objEvent);
     // открыть модалку
     const openModal = () => {
       formOverlay.classList.add('is-visible');
@@ -287,7 +287,8 @@
     };
 
     // кнопка Добавить открывает модалку
-    btnAdd.addEventListener('click', openModal);
+    btnAdd.addEventListener('click', objEvent);
+    // btnAdd.addEventListener('click', openModal);
 
     formOverlay.addEventListener('click', e => {
       const target = e.target;
@@ -305,14 +306,16 @@
   };
 
   const deleteControl = ({btnDel, list, objEvent}) => {
+    console.log('delete objEvent: ', objEvent);
     // * handleEvent obj клики по кнопкам Добавить и Удалить
-    btnDel.addEventListener('click', () => {
-      const dellCellAll = list.parentElement.querySelectorAll('.delete');
-      dellCellAll.forEach(del => {
-        // todo close only .is-visible
-        del.classList.add('is-visible');
-      });
-    });
+    // btnDel.addEventListener('click', () => {
+    //   const dellCellAll = list.parentElement.querySelectorAll('.delete');
+    //   dellCellAll.forEach(del => {
+    //     // todo close only .is-visible
+    //     del.classList.add('is-visible');
+    //   });
+    // });
+    btnDel.addEventListener('click', objEvent);
 
 
     list.addEventListener('click', (e) => {
@@ -371,6 +374,49 @@
       form,
     } = renderPhonebook(app, title);
 
+    // * objEvent
+    // обработчик событий кликов на btnAdd и btnDel
+    const objEventBtns = {
+      isShown: false, // в начале закрыты все ячейки с кнопками .delete
+      handleEvent(event) {
+        const target = event.target;
+        const cellDeleteAll = list.parentElement.querySelectorAll('.delete');
+        // const cellDeleteAll = table.querySelectorAll('.delete');
+
+        // * при нажатии на кнопку Добавить btnAdd
+        if (target === btnAdd) {
+        // здесь делаем видимым оверлай и модалку
+          formOverlay.classList.add('is-visible');
+
+          // здесь скрываем все кнопки .delete
+          // const cellDeleteAll = table.querySelectorAll('.delete');
+          this.isShown = false;
+          cellDeleteAll.forEach(cellDelete => {
+            cellDelete.classList.remove('is-visible');
+          });
+
+        // * при нажатии на кнопку Удалить btnDel
+        } else if (target === btnDel) {
+        // здесь показываем все кнопки .delete
+        // const cellDeleteAll = table.querySelectorAll('.delete');
+
+          if (this.isShown) {
+          // если видимые то скрываем
+            this.isShown = false;
+            cellDeleteAll.forEach(cellDelete => {
+              cellDelete.classList.remove('is-visible');
+            });
+          } else {
+          // если были скрытые то показываем
+            this.isShown = true;
+            cellDeleteAll.forEach(cellDelete => {
+              cellDelete.classList.add('is-visible');
+            });
+          }
+        }
+      },
+    };
+
 
     // todo ФУНКЦИОНАЛ ЗДЕСЬ
     const allRow = renderContacts(list, data);
@@ -379,8 +425,9 @@
       formOverlay,
       btnAdd,
       closeBtn,
+      objEvent: objEventBtns,
     });
-    deleteControl({btnDel, list});
+    deleteControl({btnDel, list, objEvent: objEventBtns});
     formControl({form, list, closeModal});
   };
 
