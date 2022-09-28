@@ -6,29 +6,23 @@ let data = [];
 const KEY = 'phone-test';
 
 {
-  // * сохранение в localStorage
   const getStorage = (storageKey) => {
-    console.log('read local storage');
-    console.log('storageKey: ', storageKey);
-    let result = [];
-    result = localStorage.getItem(KEY);
-    console.log('result: ', result);
-    return JSON.parse(result);
+    let result = JSON.parse(localStorage.getItem(KEY));
+    if (!Array.isArray(result)) {
+      console.log('Пусто был неАрхив');
+      result = [];
+    }
+    console.log('result ', result);
+    return result;
   };
 
   const setStorage = (storageKey, data) => {
     console.log('set local storage', data);
-    localStorage.setItem(storageKey, data);
-  };
-
-  const removeStorage = (storageKey, id) => {
-    console.log('remove storageKey: ', storageKey);
-    console.log('remove id', id, 'from local storage');
+    localStorage.setItem(storageKey, JSON.stringify(data));
   };
 
 
-
-  // * возвращает hashCode по строке str
+  //  возвращает hashCode по строке str
   const hashCode = (str) => {
     let hash = 0;
     for (let i = 0, len = str.length; i < len; i++) {
@@ -39,7 +33,7 @@ const KEY = 'phone-test';
     return Math.abs(hash);
   };
 
-  // * возвращает сгенерированый hash id для контакта
+  //  возвращает сгенерированый hash id для контакта
   const getContactHash = (contact = {}) => {
     const hashID = Object.values(contact)
         .reduce((accum, curr) => `${accum}x${hashCode(curr).toString(32)}`,
@@ -47,29 +41,15 @@ const KEY = 'phone-test';
     return hashID;
   };
 
-  // * генерирует добавляет .id для каждого контакта объкта в массиве data
-  const makeDataContactsHashes = (data) => data.map((contact, index) => {
-    contact.id = getContactHash(contact);
-  });
-
-
-  const initStorage = () => {
-    console.log(data);
-    const localStorage = getStorage(KEY);
-
-    console.log('localStorage: ', localStorage);
-    data = localStorage;
-
-    if (localStorage) {
-      console.log('storage is full of', localStorage);
+  //  генерирует добавляет .id для каждого контакта объкта в массиве data
+  const makeDataContactsHashes = (data) => {
+    if (Array.isArray(data) && data.length > 0) {
+      return data.map((contact, index) => {
+        contact.id = getContactHash(contact);
+      });
     } else {
-      console.log('storage is empty\ninit Storage');
-      setStorage(KEY, JSON.stringify(originData));
-      data = getStorage(KEY);
+      return [];
     }
-
-    makeDataContactsHashes(data);
-    console.log('data: ', data);
   };
 
 
@@ -80,6 +60,14 @@ const KEY = 'phone-test';
     return contacts[0];
   };
 
+
+  const removeStorage = (storageKey, newData) => {
+    console.log('remove storageKey: ', storageKey);
+    // todo записываем поверх новыми данными
+    setStorage(storageKey, newData);
+  };
+
+
   // удалить контакт из массива by id
   const deteleDataContact = (id) => {
     data.forEach((contact, index, arr) => {
@@ -88,7 +76,7 @@ const KEY = 'phone-test';
       }
     });
     // удалить из data
-    removeStorage(KEY, id);
+    removeStorage(KEY, data);
   };
 
 
@@ -304,9 +292,14 @@ const KEY = 'phone-test';
   };
 
   const renderContacts = (list, data) => {
-    const allRows = data.map(createRow);
-    list.append(...allRows);
-    return allRows;
+    console.log('create row mapping data: ', data);
+    if (data) {
+      const allRows = data.map(createRow);
+      list.append(...allRows);
+      return allRows;
+    } else {
+      return [];
+    }
   };
 
   const hoverRow = (allRow, logo) => {
@@ -358,16 +351,8 @@ const KEY = 'phone-test';
 
   const deleteControl = ({btnDel, list, objEvent}) => {
     console.log('delete objEvent: ', objEvent);
-    // * handleEvent obj клики по кнопкам Добавить и Удалить
-    // btnDel.addEventListener('click', () => {
-    //   const dellCellAll = list.parentElement.querySelectorAll('.delete');
-    //   dellCellAll.forEach(del => {
-    //     // todo close only .is-visible
-    //     del.classList.add('is-visible');
-    //   });
-    // });
+    // handleEvent obj клики по кнопкам Добавить и Удалить
     btnDel.addEventListener('click', objEvent);
-
 
     list.addEventListener('click', (e) => {
       const target = e.target;
@@ -377,7 +362,6 @@ const KEY = 'phone-test';
         deteleDataContact(dataID);
         console.log(data); // выводим в консоль то что у нас вышло
         targetRow.remove(); // удаляем строку из DOM
-
         return;
       }
     });
@@ -385,8 +369,15 @@ const KEY = 'phone-test';
 
   // добавляем новый контакт в массив data
   const addContactData = (newContact) => {
-    // todo добавлять хеш id для контакта
-    data.push(newContact);
+    if (Array.isArray(data)) {
+      data.push(newContact);
+      console.log('Array', data);
+    } else {
+      // todo добавлять хеш id для контакта ПРОВЕРКА
+      console.log('is not Array', data);
+      data = [];
+      data.push(newContact);
+    }
   };
 
   // добавляем новую строку с контактом в тело таблицы table.tbody
@@ -416,9 +407,7 @@ const KEY = 'phone-test';
   const init = (selectorApp, title) => {
     const app = document.querySelector(selectorApp);
 
-    initStorage();
-    const data = getStorage();
-    console.log('initial data: ', data);
+    data = getStorage(KEY);
 
     makeDataContactsHashes(data);
     const {
@@ -431,8 +420,7 @@ const KEY = 'phone-test';
       form,
     } = renderPhonebook(app, title);
 
-    // * objEvent
-    // обработчик событий кликов на btnAdd и btnDel
+    // objEvent обработчик событий кликов на btnAdd и btnDel
     const objEventBtns = {
       isShown: false, // в начале закрыты все ячейки с кнопками .delete
       handleEvent(event) {
@@ -477,6 +465,7 @@ const KEY = 'phone-test';
 
     // todo ФУНКЦИОНАЛ ЗДЕСЬ
     const allRow = renderContacts(list, data);
+    console.log('allRow: ', allRow);
     hoverRow(allRow, logo);
     const {closeModal} = modalControl({
       formOverlay,
@@ -491,3 +480,22 @@ const KEY = 'phone-test';
 
   window.phonebookInit = init;
 }
+
+
+  /*
+  const initStorage = () => {
+    console.log(data);
+    const localStorage = getStorage(KEY);
+    console.log('localStorage: ', localStorage);
+    data = localStorage;
+    if (localStorage) {
+      console.log('storage is full of', localStorage);
+    } else {
+      console.log('storage is empty\ninit Storage');
+      setStorage(KEY, JSON.stringify(originData));
+      data = getStorage(KEY);
+    }
+    makeDataContactsHashes(data);
+    console.log('data: ', data);
+  };
+*/
