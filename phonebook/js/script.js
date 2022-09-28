@@ -6,22 +6,6 @@ let data = [];
 const KEY = 'phone-test';
 
 {
-  const getStorage = (storageKey) => {
-    let result = JSON.parse(localStorage.getItem(KEY));
-    if (!Array.isArray(result)) {
-      console.log('Пусто был неАрхив');
-      result = [];
-    }
-    console.log('result ', result);
-    return result;
-  };
-
-  const setStorage = (storageKey, data) => {
-    console.log('set local storage', data);
-    localStorage.setItem(storageKey, JSON.stringify(data));
-  };
-
-
   //  возвращает hashCode по строке str
   const hashCode = (str) => {
     let hash = 0;
@@ -41,6 +25,40 @@ const KEY = 'phone-test';
     return hashID;
   };
 
+  // ** РАБОТА С ХРАНИЛИЩЕМ БРАУЗЕРА **
+  const getStorage = (storageKey) => {
+    let result = JSON.parse(localStorage.getItem(KEY));
+    if (!Array.isArray(result)) {
+      console.log('Пусто был неАрхив');
+      result = [];
+    }
+    console.log('result ', result);
+    return result;
+  };
+
+  const setStorage = (storageKey, contact = {}) => {
+    // проверяем пустой ли и масив ли вообще
+    if (!Array.isArray(data)) {
+      data = [];
+    }
+    // todo добавить проверку на имя полей
+    // todo id, name, surname, phone
+    // добавляем кеши если этого поля еще нет
+    if (contact.id === undefined) {
+      contact.id = getContactHash(contact);
+    }
+    // дабавляем контакт в data
+    data.push(contact);
+    // обновляем данные в хранилище
+    localStorage.setItem(storageKey, JSON.stringify(data));
+  };
+
+  // const setStorage = (storageKey, data) => {
+  //   console.log('set local storage', data);
+  //   localStorage.setItem(storageKey, JSON.stringify(data));
+  // };
+
+
   //  генерирует добавляет .id для каждого контакта объкта в массиве data
   const makeDataContactsHashes = (data) => {
     if (Array.isArray(data) && data.length > 0) {
@@ -54,12 +72,11 @@ const KEY = 'phone-test';
 
 
   // получить контакт из массива data by id
-  const getDataContact = (id) => {
-    // filter фильтрует элементы выдает массив контактов с данным id
-    const contacts = data.filter(contact => (contact.id === id));
-    return contacts[0];
-  };
-
+  // const getDataContact = (id) => {
+  //   // filter фильтрует элементы выдает массив контактов с данным id
+  //   const contacts = data.filter(contact => (contact.id === id));
+  //   return contacts[0];
+  // };
 
   const removeStorage = (storageKey, newData) => {
     console.log('remove storageKey: ', storageKey);
@@ -69,6 +86,7 @@ const KEY = 'phone-test';
 
 
   // удалить контакт из массива by id
+  // todo перенести все в removeStorage
   const deteleDataContact = (id) => {
     data.forEach((contact, index, arr) => {
       if (contact.id === id) {
@@ -368,17 +386,13 @@ const KEY = 'phone-test';
   };
 
   // добавляем новый контакт в массив data
-  const addContactData = (newContact) => {
-    if (Array.isArray(data)) {
-      data.push(newContact);
-      console.log('Array', data);
-    } else {
-      // todo добавлять хеш id для контакта ПРОВЕРКА
-      console.log('is not Array', data);
-      data = [];
-      data.push(newContact);
-    }
-  };
+  // todo дававить в setStorage
+  // const addContactData = (newContact) => {
+  //   if (!Array.isArray(data)) {
+  //     data = [];
+  //   }
+  //   data.push(newContact);
+  // };
 
   // добавляем новую строку с контактом в тело таблицы table.tbody
   const addContactPage = (newContact, list) => {
@@ -389,12 +403,14 @@ const KEY = 'phone-test';
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const formData = new FormData(e.target); // данные из формы
+      // формируем объект контакт из значений полей формы
       const newContact = Object.fromEntries(formData);
 
-      newContact.id = getContactHash(newContact);
-      console.log('newContact: ', newContact);
-
-      addContactData(newContact);
+      // todo перенести в setStorage
+      // newContact.id = getContactHash(newContact);
+      // console.log('newContact: ', newContact);
+      // addContactData(newContact);
+      setStorage(KEY, newContact);
       addContactPage(newContact, list);
 
       form.reset();
@@ -482,7 +498,7 @@ const KEY = 'phone-test';
 }
 
 
-  /*
+/*
   const initStorage = () => {
     console.log(data);
     const localStorage = getStorage(KEY);
