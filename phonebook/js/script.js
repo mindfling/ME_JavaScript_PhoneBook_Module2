@@ -3,7 +3,7 @@
 // const data = []; // в отдельном ящике data.js
 
 let data = [];
-const KEY = 'phone-test';
+const KEY = 'phone-test2';
 
 {
   //  возвращает hashCode по строке str
@@ -17,33 +17,65 @@ const KEY = 'phone-test';
     return Math.abs(hash);
   };
 
-  //  возвращает сгенерированый hash id для контакта
+  // * возвращает сгенерированый hash id для контакта
+  // * не учитывая имени полей
+  // const getContactHash = (contact = {}) => {
+  //   const hashID = Object.values(contact)
+  //       .reduce((accum, curr) => `${accum}x${hashCode(curr).toString(32)}`,
+  //           'id');
+  //   return hashID;
+  // };
+
+  // * возвращает сгенерированый hash id для контакта
+  // * учитывая имя поля id
   const getContactHash = (contact = {}) => {
-    const hashID = Object.values(contact)
-        .reduce((accum, curr) => `${accum}x${hashCode(curr).toString(32)}`,
-            'id');
+    const hashID = Object.entries(contact)
+        .reduce((accum, curr, index, arr) => {
+          const currName = curr[0];
+          const currVal = curr[1];
+          if (currName === 'id') {
+            // поле с именем id не учитывается!
+            return accum;
+          } else {
+            return `${accum}x${hashCode(currVal).toString(32)}`;
+          }
+        },
+        'id');
     return hashID;
   };
 
+
   // ** РАБОТА С ХРАНИЛИЩЕМ БРАУЗЕРА **
+  // читает и возвращает данные data из Хранилища
   const getStorage = (storageKey) => {
     let result = JSON.parse(localStorage.getItem(KEY));
     if (!Array.isArray(result)) {
-      console.log('Пусто был неАрхив');
       result = [];
     }
-    console.log('result ', result);
     return result;
   };
 
+  // читает данные из хранилища добавляет к ним контакт
+  // и снова перезависывает данные в хранилище
   const setStorage = (storageKey, contact = {}) => {
+    // читаем текущие данные
+    data = getStorage(KEY);
     // проверяем пустой ли и масив ли вообще
     if (!Array.isArray(data)) {
       data = [];
     }
-    // todo добавить проверку на имя полей
-    // todo id, name, surname, phone
-    // добавляем кеши если этого поля еще нет
+    // todo добавить проверку на имя полей name, surname, phone
+    // добавляем поля если этого поля еще нет
+    if (contact.name === undefined) {
+      contact.name = '';
+    }
+    if (contact.surname === undefined) {
+      contact.surname = '';
+    }
+    if (contact.phone === undefined) {
+      contact.phone = '';
+    }
+    // дабавляем хэш
     if (contact.id === undefined) {
       contact.id = getContactHash(contact);
     }
@@ -52,11 +84,6 @@ const KEY = 'phone-test';
     // обновляем данные в хранилище
     localStorage.setItem(storageKey, JSON.stringify(data));
   };
-
-  // const setStorage = (storageKey, data) => {
-  //   console.log('set local storage', data);
-  //   localStorage.setItem(storageKey, JSON.stringify(data));
-  // };
 
 
   //  генерирует добавляет .id для каждого контакта объкта в массиве data
@@ -70,33 +97,18 @@ const KEY = 'phone-test';
     }
   };
 
-
-  // получить контакт из массива data by id
-  // const getDataContact = (id) => {
-  //   // filter фильтрует элементы выдает массив контактов с данным id
-  //   const contacts = data.filter(contact => (contact.id === id));
-  //   return contacts[0];
-  // };
-
-  const removeStorage = (storageKey, newData) => {
-    console.log('remove storageKey: ', storageKey);
-    // todo записываем поверх новыми данными
-    setStorage(storageKey, newData);
-  };
-
-
-  // удалить контакт из массива by id
-  // todo перенести все в removeStorage
-  const deteleDataContact = (id) => {
+  const removeStorage = (storageKey, id) => {
+    // читаем текущие данные
+    data = getStorage(KEY);
+    // удаляем из массива контакт с этим id
     data.forEach((contact, index, arr) => {
       if (contact.id === id) {
         data.splice(index, 1);
       }
     });
-    // удалить из data
-    removeStorage(KEY, data);
+    // сохраняем обратно в хранилище
+    localStorage.setItem(storageKey, JSON.stringify(data));
   };
-
 
   const createContainer = () => {
     const container = document.createElement('div');
@@ -310,7 +322,6 @@ const KEY = 'phone-test';
   };
 
   const renderContacts = (list, data) => {
-    console.log('create row mapping data: ', data);
     if (data) {
       const allRows = data.map(createRow);
       list.append(...allRows);
@@ -320,6 +331,7 @@ const KEY = 'phone-test';
     }
   };
 
+  // * добавляем на каждый ряд слушателей
   const hoverRow = (allRow, logo) => {
     const text = logo.textContent;
     allRow.forEach(contact => {
@@ -336,8 +348,6 @@ const KEY = 'phone-test';
 
   // функционал работы с модальной формой
   const modalControl = ({btnAdd, formOverlay, closeBtn, objEvent}) => {
-    console.log('modal objEvent: ', objEvent);
-
     // открыть модалку
     const openModal = () => {
       formOverlay.classList.add('is-visible');
@@ -368,31 +378,26 @@ const KEY = 'phone-test';
   };
 
   const deleteControl = ({btnDel, list, objEvent}) => {
-    console.log('delete objEvent: ', objEvent);
     // handleEvent obj клики по кнопкам Добавить и Удалить
     btnDel.addEventListener('click', objEvent);
 
     list.addEventListener('click', (e) => {
       const target = e.target;
       if (target.closest('.del-icon')) {
-        const targetRow = target.closest('.contact'); // clicked Row
-        const dataID = targetRow.id; // data ID contact
-        deteleDataContact(dataID);
-        console.log(data); // выводим в консоль то что у нас вышло
+        // ряд по которому кликнули
+        const targetRow = target.closest('.contact');
+        // id контакта из ряда
+        const dataID = targetRow.id;
+        // deteleDataContact(dataID);
+        removeStorage(KEY, dataID); // удаляем из хранилища
         targetRow.remove(); // удаляем строку из DOM
+        console.log(data); // выводим в консоль то что у нас вышло
+        // todo после каждого удаления контакта хорошо бы делать перерендер
         return;
       }
     });
   };
 
-  // добавляем новый контакт в массив data
-  // todo дававить в setStorage
-  // const addContactData = (newContact) => {
-  //   if (!Array.isArray(data)) {
-  //     data = [];
-  //   }
-  //   data.push(newContact);
-  // };
 
   // добавляем новую строку с контактом в тело таблицы table.tbody
   const addContactPage = (newContact, list) => {
@@ -405,12 +410,9 @@ const KEY = 'phone-test';
       const formData = new FormData(e.target); // данные из формы
       // формируем объект контакт из значений полей формы
       const newContact = Object.fromEntries(formData);
-
-      // todo перенести в setStorage
-      // newContact.id = getContactHash(newContact);
-      // console.log('newContact: ', newContact);
-      // addContactData(newContact);
+      // записываем в локальное хранилище
       setStorage(KEY, newContact);
+      // добавляем в DOM на страницу
       addContactPage(newContact, list);
 
       form.reset();
@@ -422,10 +424,12 @@ const KEY = 'phone-test';
   // * MAIN INIT *
   const init = (selectorApp, title) => {
     const app = document.querySelector(selectorApp);
-
     data = getStorage(KEY);
-
     makeDataContactsHashes(data);
+    // сохраняем обратно в хранилище
+    localStorage.setItem(KEY, JSON.stringify(data));
+    // перенести в makeDataContactsHashes
+
     const {
       list,
       logo,
@@ -459,8 +463,6 @@ const KEY = 'phone-test';
         // * при нажатии на кнопку Удалить btnDel
         } else if (target === btnDel) {
         // здесь показываем все кнопки .delete
-        // const cellDeleteAll = table.querySelectorAll('.delete');
-
           if (this.isShown) {
           // если видимые то скрываем
             this.isShown = false;
@@ -478,11 +480,12 @@ const KEY = 'phone-test';
       },
     };
 
+    // ФУНКЦИОНАЛ ЗДЕСЬ
 
-    // todo ФУНКЦИОНАЛ ЗДЕСЬ
     const allRow = renderContacts(list, data);
     console.log('allRow: ', allRow);
-    hoverRow(allRow, logo);
+    hoverRow(allRow, logo); // навешиваем слушателей hover при инициализации
+    // навешивать слушателей еще и при добавлении нового ряда
     const {closeModal} = modalControl({
       formOverlay,
       btnAdd,
@@ -496,22 +499,3 @@ const KEY = 'phone-test';
 
   window.phonebookInit = init;
 }
-
-
-/*
-  const initStorage = () => {
-    console.log(data);
-    const localStorage = getStorage(KEY);
-    console.log('localStorage: ', localStorage);
-    data = localStorage;
-    if (localStorage) {
-      console.log('storage is full of', localStorage);
-    } else {
-      console.log('storage is empty\ninit Storage');
-      setStorage(KEY, JSON.stringify(originData));
-      data = getStorage(KEY);
-    }
-    makeDataContactsHashes(data);
-    console.log('data: ', data);
-  };
-*/
