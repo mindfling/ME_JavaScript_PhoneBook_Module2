@@ -3,7 +3,8 @@
 // const data = []; // в отдельном ящике data.js
 
 let data = [];
-const KEY = 'phone-test2';
+const KEY = 'phone-test3';
+const SORT_KEY = 'phone-sort3';
 
 {
   //  возвращает hashCode по строке str
@@ -17,8 +18,8 @@ const KEY = 'phone-test2';
     return Math.abs(hash);
   };
 
-  // * возвращает сгенерированый hash id для контакта
-  // * не учитывая имени полей
+  // // возвращает сгенерированый hash id для контакта
+  // // не учитывая имени полей
   // const getContactHash = (contact = {}) => {
   //   const hashID = Object.values(contact)
   //       .reduce((accum, curr) => `${accum}x${hashCode(curr).toString(32)}`,
@@ -26,8 +27,8 @@ const KEY = 'phone-test2';
   //   return hashID;
   // };
 
-  // * возвращает сгенерированый hash id для контакта
-  // * учитывая имя поля id
+  // возвращает сгенерированый hash id для контакта
+  // учитывая имя поля id
   const getContactHash = (contact = {}) => {
     const hashID = Object.entries(contact)
         .reduce((accum, curr, index, arr) => {
@@ -173,6 +174,7 @@ const KEY = 'phone-test2';
       </tr>
     `);
     */
+    /*
     thead.insertAdjacentHTML('beforeend', `
       <tr class="table__row_head">
         <th class="delete">Удалить</th>
@@ -180,15 +182,15 @@ const KEY = 'phone-test2';
               data-sortby="by-name"
               title="Сортировать по Имени">Имя</th>
               <th class="table__cell_head"
-              data-sortby="by-surname" 
+              data-sortby="by-surname"
               title="Сортировать по Фамилии">Фамилия</th>
               <th class="table__cell_head by-phone descending"
-              data-sortby="by-phone" 
+              data-sortby="by-phone"
               title="Сортировать по номеру телефона">Телефон</th>
       </tr>
     `);
+    */
 
-    /*
     thead.insertAdjacentHTML('beforeend', `
       <tr class="table__row_head">
         <th class="delete">Удалить</th>
@@ -196,17 +198,16 @@ const KEY = 'phone-test2';
               data-sortby="by-name"
               data-sortorder=""
               title="Сортировать по Имени">Имя</th>
-              <th class="table__cell_head by-surname ascending"
+              <th class="table__cell_head by-surname"
               data-sortby="by-surname"
-              data-sortorder="ascending"
+              data-sortorder=""
               title="Сортировать по Фамилии">Фамилия</th>
-              <th class="table__cell_head by-phone descending"
+              <th class="table__cell_head by-phone"
               data-sortby="by-phone"
-              data-sortorder="descending"
+              data-sortorder=""
               title="Сортировать по номеру телефона">Телефон</th>
       </tr>
     `);
-    */
 
     // генерим и возращаем ссылку на тело таблицы
     const tbody = document.createElement('tbody');
@@ -574,28 +575,43 @@ const KEY = 'phone-test2';
 
     // ФУНКЦИОНАЛ ЗДЕСЬ
     // todo init sort params: sortorder sortby
-    let sortby = '';
-    let sortorder = '';
+    // let sortby = '';
+    let sortby = localStorage.getItem(SORT_KEY);
+    console.log('sortby: ', sortby);
+    const sortorder = '';
+    console.log('sortorder: ', sortorder);
+    // * initial sorting
+    for (const child of head.firstElementChild.children) {
+      console.log('child: ', child);
+      child.classList.remove('ascending');
+      child.classList.remove('descending');
+      child.dataset.sortorder = '';
+      if (child.dataset.sortby === sortby) {
+        child.classList.add('ascending');
+        child.dataset.sortorder = 'ascending'; // flag
+      }
+    }
+    data = sortDataBy(sortby, sortorder);
+    // сначала удаляем
+    while (list.lastChild) {
+      list.lastChild.remove();
+    }
+    // потом перерендериваем
+    const allRow = renderContacts(list, data);
 
-    list.parentElement.addEventListener('click', e => {
+    head.addEventListener('click', e => {
       const target = e.target;
 
       // * click по клеткам заголовка таблицы для сортировки
       if (target.classList.contains('table__cell_head')) {
-        console.log('target: ', target);
-
-        // костыль скрывает delete кнопки в заголовке таблицы
-        console.log('head close delete elem: thead ', head);
-        console.log('head elem: tr ', head.firstElementChild);
-        console.log('head children: children', head.firstElementChild.children);
-
-        // перебираем все дочерние клетки ряда
+        // перебираем все дочерние клетки ряда заголовка таблицы
         for (const child of head.firstElementChild.children) {
           child.classList.remove('ascending');
           child.classList.remove('descending');
+          child.dataset.sortorder = '';
           if (target === child) {
             child.classList.add('ascending');
-            console.log('target child: ', child);
+            child.dataset.sortorder = 'ascending'; // flag
           }
         }
 
@@ -607,19 +623,16 @@ const KEY = 'phone-test2';
         // осктльные в таблице просто перерендерятся
 
         sortby = target.dataset?.sortby;
-        sortorder = target.dataset?.sortorder;
-        console.log('sort by ', target.dataset.sortby,
-            ', sort order', target.dataset.sortorder);
+        // обновляем данные о сортировке в хранилище
+        localStorage.setItem(SORT_KEY, sortby);
+        // sortorder = target.dataset?.sortorder;
+        console.log(target.dataset.sortby, target.dataset.sortorder);
 
-        // todo сразу же скрываем все видимые .delete элем
-        // closeAllDelete(list.parentElement);
-        // objEvent.visibleFlag = false;
-        // * сортируем
+        // сортируем
         const sortData = sortDataBy(sortby, sortorder);
         // clearContactList очищаем список контактов в DOM
         while (list.lastChild) {
           // наверное можно просто не удаляя использовать .prepend()
-          // console.log('list.lastChild: ', list.lastChild);
           list.lastChild.remove();
         }
         // перерисовка обновленного списка контактов
@@ -627,8 +640,8 @@ const KEY = 'phone-test2';
       }
     });
 
-    const allRow = renderContacts(list, data);
-    console.log('allRow: ', allRow);
+
+    // console.log('allRow: ', allRow);
     hoverRow(allRow, logo); // навешиваем слушателей hover при инициализации
     // навешивать слушателей еще и при добавлении нового ряда
     const {closeModal} = modalControl({
