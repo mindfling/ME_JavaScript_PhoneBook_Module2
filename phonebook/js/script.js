@@ -64,8 +64,7 @@ const KEY = 'phone-test2';
     if (!Array.isArray(data)) {
       data = [];
     }
-    // todo добавить проверку на имя полей name, surname, phone
-    // добавляем поля если этого поля еще нет
+    // проверка на имя полей name, surname, phone
     if (contact.name === undefined) {
       contact.name = '';
     }
@@ -84,7 +83,6 @@ const KEY = 'phone-test2';
     // обновляем данные в хранилище
     localStorage.setItem(storageKey, JSON.stringify(data));
   };
-
 
   //  генерирует добавляет .id для каждого контакта объкта в массиве data
   const makeDataContactsHashes = (data) => {
@@ -165,6 +163,7 @@ const KEY = 'phone-test2';
     table.classList.add('table', 'table-striped');
     // генерим заголовок таблицы
     const thead = document.createElement('thead');
+    /*
     thead.insertAdjacentHTML('beforeend', `
       <tr>
         <th class="delete">Удалить</th>
@@ -173,6 +172,42 @@ const KEY = 'phone-test2';
         <th>Телефон</th>
       </tr>
     `);
+    */
+    thead.insertAdjacentHTML('beforeend', `
+      <tr class="table__row_head">
+        <th class="delete">Удалить</th>
+        <th class="table__cell_head by-name"
+              data-sortby="by-name"
+              title="Сортировать по Имени">Имя</th>
+              <th class="table__cell_head"
+              data-sortby="by-surname" 
+              title="Сортировать по Фамилии">Фамилия</th>
+              <th class="table__cell_head by-phone descending"
+              data-sortby="by-phone" 
+              title="Сортировать по номеру телефона">Телефон</th>
+      </tr>
+    `);
+
+    /*
+    thead.insertAdjacentHTML('beforeend', `
+      <tr class="table__row_head">
+        <th class="delete">Удалить</th>
+        <th class="table__cell_head by-name"
+              data-sortby="by-name"
+              data-sortorder=""
+              title="Сортировать по Имени">Имя</th>
+              <th class="table__cell_head by-surname ascending"
+              data-sortby="by-surname"
+              data-sortorder="ascending"
+              title="Сортировать по Фамилии">Фамилия</th>
+              <th class="table__cell_head by-phone descending"
+              data-sortby="by-phone"
+              data-sortorder="descending"
+              title="Сортировать по номеру телефона">Телефон</th>
+      </tr>
+    `);
+    */
+
     // генерим и возращаем ссылку на тело таблицы
     const tbody = document.createElement('tbody');
     table.append(thead, tbody);
@@ -276,6 +311,7 @@ const KEY = 'phone-test2';
     app.append(header, main, footer);
     return {
       logo,
+      head: table.thead,
       list: table.tbody,
       btnAdd: buttonGroup.btns[0],
       btnDel: buttonGroup.btns[1],
@@ -421,6 +457,61 @@ const KEY = 'phone-test2';
   };
 
 
+  // * sortDataBy
+  const sortDataBy = (sortby = '', sortorder = '') => {
+    let sorted = [];
+    switch (sortby) {
+      case 'by-name':
+        console.log('сортировка по имени');
+        sorted = data.sort((prodA, prodB) => {
+          const nameA = prodA.name;
+          const nameB = prodB.name;
+          if (nameA > nameB) {
+            return 1;
+          } else if (nameA < nameB) {
+            return -1;
+          } else {
+            return 0;
+          }
+        });
+        break;
+      case 'by-surname':
+        console.log('сортировка по фамилии');
+        sorted = data.sort((prodPrev, prodNext) => {
+          const paramPrev = prodPrev.surname;
+          const paramNext = prodNext.surname;
+          if (paramPrev > paramNext) {
+            return 1;
+          } else if (paramPrev < paramNext) {
+            return -1;
+          } else {
+            return 0;
+          }
+        });
+        break;
+      case 'by-phone':
+        console.log('сортировка по номеру телефона');
+        sorted = data.sort((prodPrev, prodNext) => {
+          const paramPrev = prodPrev.phone;
+          const paramNext = prodNext.phone;
+          if (paramPrev > paramNext) {
+            return 1;
+          } else if (paramPrev < paramNext) {
+            return -1;
+          } else {
+            return 0;
+          }
+        });
+        break;
+      default:
+        console.log('по умолчанию');
+        break;
+    }
+    // return data;
+    return sorted;
+  };
+
+
   // * MAIN INIT *
   const init = (selectorApp, title) => {
     const app = document.querySelector(selectorApp);
@@ -431,7 +522,8 @@ const KEY = 'phone-test2';
     // перенести в makeDataContactsHashes
 
     const {
-      list,
+      head, // table thead
+      list, // table tbody
       logo,
       btnAdd,
       btnDel,
@@ -481,6 +573,59 @@ const KEY = 'phone-test2';
     };
 
     // ФУНКЦИОНАЛ ЗДЕСЬ
+    // todo init sort params: sortorder sortby
+    let sortby = '';
+    let sortorder = '';
+
+    list.parentElement.addEventListener('click', e => {
+      const target = e.target;
+
+      // * click по клеткам заголовка таблицы для сортировки
+      if (target.classList.contains('table__cell_head')) {
+        console.log('target: ', target);
+
+        // костыль скрывает delete кнопки в заголовке таблицы
+        console.log('head close delete elem: thead ', head);
+        console.log('head elem: tr ', head.firstElementChild);
+        console.log('head children: children', head.firstElementChild.children);
+
+        // перебираем все дочерние клетки ряда
+        for (const child of head.firstElementChild.children) {
+          child.classList.remove('ascending');
+          child.classList.remove('descending');
+          if (target === child) {
+            child.classList.add('ascending');
+            console.log('target child: ', child);
+          }
+        }
+
+        if (objEventBtns.isShown) {
+          console.log('delete скрываем');
+          head.querySelector('.delete').classList.remove('is-visible');
+          objEventBtns.isShown = false;
+        }
+        // осктльные в таблице просто перерендерятся
+
+        sortby = target.dataset?.sortby;
+        sortorder = target.dataset?.sortorder;
+        console.log('sort by ', target.dataset.sortby,
+            ', sort order', target.dataset.sortorder);
+
+        // todo сразу же скрываем все видимые .delete элем
+        // closeAllDelete(list.parentElement);
+        // objEvent.visibleFlag = false;
+        // * сортируем
+        const sortData = sortDataBy(sortby, sortorder);
+        // clearContactList очищаем список контактов в DOM
+        while (list.lastChild) {
+          // наверное можно просто не удаляя использовать .prepend()
+          // console.log('list.lastChild: ', list.lastChild);
+          list.lastChild.remove();
+        }
+        // перерисовка обновленного списка контактов
+        renderContacts(list, sortData);
+      }
+    });
 
     const allRow = renderContacts(list, data);
     console.log('allRow: ', allRow);

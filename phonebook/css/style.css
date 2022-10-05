@@ -47,8 +47,6 @@ body {
   margin-bottom: 30px;
 }
 
-
-
 .form {
   padding: 30px 50px;
   background-color: #fff;
@@ -66,7 +64,6 @@ body {
   z-index: 2;
 }
 
-
 .form-title {
   margin-top: 0;
   padding-bottom: 20px;
@@ -75,7 +72,6 @@ body {
 .form-label {
   width: 80px;
 }
-
 
 .form-overlay {
   background-color: rgba(0, 0, 0, 0.6);
@@ -129,4 +125,73 @@ body {
   background-color: #3E5E93;
   color: #fff;
   text-align: center;
+}
+
+
+/* */
+.table__cell_head {
+  opacity: 1;
+  /* cursor: url(./purple-hand-cur.cur), default; */
+  cursor: url(./purple-hand.cur), default;
+  transition: all 400ms ease;
+}
+
+/* 
+.table__cell_text {
+  display: block;
+  position: relative;
+} */
+
+.table__cell_head:hover {
+  opacity: 0.65;
+}
+
+.table__cell_head.ascending {
+  /* color: blueviolet; */
+  color: black;
+}
+
+.table__cell_head.ascending::after {
+  display: inline-block;
+  content: "";
+  width: 10px;
+  height: 8px;
+  background-color: transparent;
+  border-top: 0;
+  border-right: 6px solid transparent;
+  border-bottom: 8px solid #0d0d0d;
+  border-left: 6px solid transparent;
+  margin: 0 0 1px 4px;
+}
+
+.table__cell_head.descending::after {
+  display: inline-block;
+  content: "";
+  background-color: transparent;
+  width: 10px;
+  height: 8px;
+  border-top: 8px solid #0d0d0d;
+  border-right: 6px solid transparent;
+  border-bottom: 0;
+  border-left: 6px solid transparent;
+  margin: 0 0 0px 4px;
+}
+
+.table__cell_head.descending {
+  color: black;
+}
+
+.demo {
+  display: block;
+  padding: 10px;
+}
+
+.demo__storage {
+  display: block;
+  border: 1px solid gray;
+  padding: 10px 15px;
+}
+
+.demo__storage_session {
+  margin-bottom: 10px;
 }
