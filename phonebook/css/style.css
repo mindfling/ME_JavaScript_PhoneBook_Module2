@@ -136,11 +136,15 @@ body {
   transition: all 400ms ease;
 }
 
-/* 
+/* tr.contact:hover, */
+.contact:hover {
+	background: powderblue !important;
+}
+
 .table__cell_text {
   display: block;
   position: relative;
-} */
+}
 
 .table__cell_head:hover {
   opacity: 0.65;
