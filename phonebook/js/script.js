@@ -1,7 +1,7 @@
 'use strict';
 
 let data = [];
-const KEY = 'phone-test3';
+const KEY = 'phone-test2';
 const SORT_KEY = 'phone-sort3';
 
 {
@@ -466,13 +466,19 @@ const SORT_KEY = 'phone-sort3';
     let sorted = [];
     switch (sortby) {
       case 'by-name':
-        console.log('сортировка по имени');
-        sorted = data.sort((prodA, prodB) => {
-          const nameA = prodA.name;
-          const nameB = prodB.name;
-          if (nameA > nameB) {
+        // сортировка по имени
+        sorted = data.sort((prev, next) => {
+          // ascending a, b, c, .. z order
+          let namePrev = prev?.name;
+          let nameNext = next?.name;
+          if (sortorder === 'descending') {
+            // descending z, y, x, .. a order
+            namePrev = next?.name;
+            nameNext = prev?.name;
+          }
+          if (namePrev > nameNext) {
             return 1;
-          } else if (nameA < nameB) {
+          } else if (namePrev < nameNext) {
             return -1;
           } else {
             return 0;
@@ -480,13 +486,15 @@ const SORT_KEY = 'phone-sort3';
         });
         break;
       case 'by-surname':
-        console.log('сортировка по фамилии');
-        sorted = data.sort((prodPrev, prodNext) => {
-          const paramPrev = prodPrev.surname;
-          const paramNext = prodNext.surname;
-          if (paramPrev > paramNext) {
+        // сортировка по фамилии
+        sorted = data.sort((prev, next) => {
+          // eslint-disable-next-line max-len
+          const surnamePrev = (sortorder === 'ascending') ? prev.surname : next.surname;
+          // eslint-disable-next-line max-len
+          const surnameNext = (sortorder === 'ascending') ? next.surname : prev.surname;
+          if (surnamePrev > surnameNext) {
             return 1;
-          } else if (paramPrev < paramNext) {
+          } else if (surnamePrev < surnameNext) {
             return -1;
           } else {
             return 0;
@@ -494,13 +502,20 @@ const SORT_KEY = 'phone-sort3';
         });
         break;
       case 'by-phone':
-        console.log('сортировка по номеру телефона');
-        sorted = data.sort((prodPrev, prodNext) => {
-          const paramPrev = prodPrev.phone;
-          const paramNext = prodNext.phone;
-          if (paramPrev > paramNext) {
+        // сортировка по номеру телефона
+        sorted = data.sort((prev, next) => {
+          let prevPhone = '';
+          let nextPhone = '';
+          if (sortorder === 'ascending') {
+            prevPhone = prev.phone;
+            nextPhone = next.phone;
+          } else {
+            prevPhone = next.phone;
+            nextPhone = prev.phone;
+          }
+          if (prevPhone > nextPhone) {
             return 1;
-          } else if (paramPrev < paramNext) {
+          } else if (prevPhone < nextPhone) {
             return -1;
           } else {
             return 0;
@@ -519,11 +534,18 @@ const SORT_KEY = 'phone-sort3';
   // * MAIN INIT *
   const init = (selectorApp, title) => {
     const app = document.querySelector(selectorApp);
+
+    // читаем данные контактов из Хранилища
     data = getStorage(KEY);
+    // обновляем хэши id контактов
     makeDataContactsHashes(data);
     // сохраняем обратно в хранилище
     localStorage.setItem(KEY, JSON.stringify(data));
     // перенести в makeDataContactsHashes
+
+    // читаем данные о сортировке
+    let sortInfo = {};
+    // let sortInfo = JSON.parse(localStorage.getItem(SORT_KEY)); // todo
 
     const {
       head, // table thead
@@ -542,21 +564,17 @@ const SORT_KEY = 'phone-sort3';
       handleEvent(event) {
         const target = event.target;
         const cellDeleteAll = list.parentElement.querySelectorAll('.delete');
-        // const cellDeleteAll = table.querySelectorAll('.delete');
-
-        // * при нажатии на кнопку Добавить btnAdd
+        // при нажатии на кнопку Добавить btnAdd
         if (target === btnAdd) {
         // здесь делаем видимым оверлай и модалку
           formOverlay.classList.add('is-visible');
-
           // здесь скрываем все кнопки .delete
           // const cellDeleteAll = table.querySelectorAll('.delete');
           this.isShown = false;
           cellDeleteAll.forEach(cellDelete => {
             cellDelete.classList.remove('is-visible');
           });
-
-        // * при нажатии на кнопку Удалить btnDel
+        // при нажатии на кнопку Удалить btnDel
         } else if (target === btnDel) {
         // здесь показываем все кнопки .delete
           if (this.isShown) {
@@ -578,40 +596,38 @@ const SORT_KEY = 'phone-sort3';
 
     // ФУНКЦИОНАЛ ЗДЕСЬ
     // todo init sort params: sortorder sortby
-    // let sortby = '';
-    // let sortorder = '';
-    let sortInfo = {};
 
     if (!(sortInfo = JSON.parse(localStorage.getItem(SORT_KEY)))) {
       // если sortInfo неТ в хранилище
-      console.warn('если sortInfo неТ в хранилище');
-      sortInfo = {
-        sortby: '',
-        sortorder: '',
-      };
+      // console.warn('если sortInfo неТ в хранилище');
       // заполняем значением по умолчанию
+      sortInfo = {
+        sortby: 'by-name',
+        sortorder: 'ascending',
+      };
+      // сохраняем в хранилище
       localStorage.setItem(SORT_KEY, JSON.stringify(sortInfo));
     } else {
       // если сохранено в хранилище
-      console.log('sortInfo: ', sortInfo);
+      console.log('начальные значения в хранилище sortInfo:', sortInfo);
     }
 
     console.log('sortby: ', sortInfo.sortby);
     console.log('sortorder: ', sortInfo.sortorder);
 
-    // * initial sorting
+    // initial sorting
     for (const child of head.firstElementChild.children) {
-      child.classList.remove('ascending');
-      child.classList.remove('descending');
-      child.dataset.sortorder = '';
+      // ? child.classList.remove('ascending');
+      // ? child.classList.remove('descending');
+      // ? child.dataset.sortorder = '';
       if (child.dataset.sortby === sortInfo.sortby) {
-        child.classList.add('ascending');
-        child.dataset.sortorder = 'ascending'; // flag
+        child.classList.add(sortInfo.sortorder);
+        child.dataset.sortorder = sortInfo.sortorder; // flag
       }
     }
 
     data = sortDataBy(sortInfo.sortby, sortInfo.sortorder);
-    // сначала удаляем
+    // сначала удаляем из DOM
     while (list.lastChild) {
       list.lastChild.remove();
     }
@@ -626,34 +642,50 @@ const SORT_KEY = 'phone-sort3';
       if (target.classList.contains('table__cell_head')) {
         // перебираем все дочерние клетки ряда заголовка таблицы
         for (const child of head.firstElementChild.children) {
-          child.classList.remove('ascending');
-          child.classList.remove('descending');
-          child.dataset.sortorder = ''; // todo
           if (target === child) {
-            child.dataset.sortorder = 'ascending'; // todo flag
-            child.classList.add('ascending');
+            // ПУСТАЯ ВКЛАДКА ""
+            if (child.dataset.sortorder === '') {
+              child.dataset.sortorder = 'descending';
+              child.classList.remove('ascending');
+              child.classList.add('descending');
+              console.log('empty to ascending');
+            }
+
+            if (child.dataset.sortorder === 'ascending') {
+              child.dataset.sortorder = 'descending';
+              child.classList.remove('ascending');
+              child.classList.add('descending');
+              console.log('ascending to descending');
+            } else if (child.dataset.sortorder === 'descending') {
+              child.dataset.sortorder = 'ascending';
+              child.classList.remove('descending');
+              child.classList.add('ascending');
+              console.log('descending to ascending');
+            }
+          } else {
+            child.classList.remove('ascending');
+            child.classList.remove('descending');
+            child.dataset.sortorder = '';
           }
         }
-
-        if (objEventBtns.isShown) {
-          console.log('delete скрываем');
-          // todo
-          head.querySelector('.delete').classList.remove('is-visible');
-          objEventBtns.isShown = false;
-        }
-        // осктльные в таблице просто перерендерятся
 
         sortInfo.sortby = target.dataset?.sortby;
         sortInfo.sortorder = target.dataset?.sortorder;
         // обновляем данные о сортировке в хранилище
         localStorage.setItem(SORT_KEY, JSON.stringify(sortInfo));
-        // sortorder = target.dataset?.sortorder;
-        console.log(target.dataset.sortby, target.dataset.sortorder);
+
+
+        if (objEventBtns.isShown) {
+          console.log('delete скрываем');
+          head.querySelector('.delete').classList.remove('is-visible');
+          objEventBtns.isShown = false;
+        }
+        // осктльные в таблице просто перерендерятся
+
         // сортируем
         const sortData = sortDataBy(sortInfo.sortby, sortInfo.sortorder);
-        // clearContactList очищаем список контактов в DOM
+        // удаляем строки из DOM
         while (list.lastChild) {
-          // наверное можно просто не удаляя использовать .prepend()
           list.lastChild.remove();
         }
         // перерисовка обновленного списка контактов
