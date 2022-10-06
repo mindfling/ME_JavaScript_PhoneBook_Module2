@@ -579,26 +579,44 @@ const SORT_KEY = 'phone-sort3';
     // ФУНКЦИОНАЛ ЗДЕСЬ
     // todo init sort params: sortorder sortby
     // let sortby = '';
-    let sortby = localStorage.getItem(SORT_KEY);
-    console.log('sortby: ', sortby);
-    const sortorder = '';
-    console.log('sortorder: ', sortorder);
+    // let sortorder = '';
+    let sortInfo = {};
+
+    if (!(sortInfo = JSON.parse(localStorage.getItem(SORT_KEY)))) {
+      // если sortInfo неТ в хранилище
+      console.warn('если sortInfo неТ в хранилище');
+      sortInfo = {
+        sortby: '',
+        sortorder: '',
+      };
+      // заполняем значением по умолчанию
+      localStorage.setItem(SORT_KEY, JSON.stringify(sortInfo));
+    } else {
+      // если сохранено в хранилище
+      console.log('sortInfo: ', sortInfo);
+    }
+
+    console.log('sortby: ', sortInfo.sortby);
+    console.log('sortorder: ', sortInfo.sortorder);
+
     // * initial sorting
     for (const child of head.firstElementChild.children) {
       child.classList.remove('ascending');
       child.classList.remove('descending');
       child.dataset.sortorder = '';
-      if (child.dataset.sortby === sortby) {
+      if (child.dataset.sortby === sortInfo.sortby) {
         child.classList.add('ascending');
         child.dataset.sortorder = 'ascending'; // flag
       }
     }
-    data = sortDataBy(sortby, sortorder);
+
+    data = sortDataBy(sortInfo.sortby, sortInfo.sortorder);
     // сначала удаляем
     while (list.lastChild) {
       list.lastChild.remove();
     }
     // потом перерендериваем
+    // renderContacts(list, data);
     const allRow = renderContacts(list, data);
 
     head.addEventListener('click', e => {
@@ -610,28 +628,29 @@ const SORT_KEY = 'phone-sort3';
         for (const child of head.firstElementChild.children) {
           child.classList.remove('ascending');
           child.classList.remove('descending');
-          child.dataset.sortorder = '';
+          child.dataset.sortorder = ''; // todo
           if (target === child) {
+            child.dataset.sortorder = 'ascending'; // todo flag
             child.classList.add('ascending');
-            child.dataset.sortorder = 'ascending'; // flag
           }
         }
 
         if (objEventBtns.isShown) {
           console.log('delete скрываем');
+          // todo
           head.querySelector('.delete').classList.remove('is-visible');
           objEventBtns.isShown = false;
         }
         // осктльные в таблице просто перерендерятся
 
-        sortby = target.dataset?.sortby;
+        sortInfo.sortby = target.dataset?.sortby;
+        sortInfo.sortorder = target.dataset?.sortorder;
         // обновляем данные о сортировке в хранилище
-        localStorage.setItem(SORT_KEY, sortby);
+        localStorage.setItem(SORT_KEY, JSON.stringify(sortInfo));
         // sortorder = target.dataset?.sortorder;
         console.log(target.dataset.sortby, target.dataset.sortorder);
-
         // сортируем
-        const sortData = sortDataBy(sortby, sortorder);
+        const sortData = sortDataBy(sortInfo.sortby, sortInfo.sortorder);
         // clearContactList очищаем список контактов в DOM
         while (list.lastChild) {
           // наверное можно просто не удаляя использовать .prepend()
@@ -641,7 +660,6 @@ const SORT_KEY = 'phone-sort3';
         renderContacts(list, sortData);
       }
     });
-
 
     // console.log('allRow: ', allRow);
     hoverRow(allRow, logo); // навешиваем слушателей hover при инициализации
