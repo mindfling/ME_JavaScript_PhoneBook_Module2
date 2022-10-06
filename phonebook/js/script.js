@@ -1,7 +1,5 @@
 'use strict';
 
-// const data = []; // в отдельном ящике data.js
-
 let data = [];
 const KEY = 'phone-test3';
 const SORT_KEY = 'phone-sort3';
@@ -17,15 +15,6 @@ const SORT_KEY = 'phone-sort3';
     }
     return Math.abs(hash);
   };
-
-  // // возвращает сгенерированый hash id для контакта
-  // // не учитывая имени полей
-  // const getContactHash = (contact = {}) => {
-  //   const hashID = Object.values(contact)
-  //       .reduce((accum, curr) => `${accum}x${hashCode(curr).toString(32)}`,
-  //           'id');
-  //   return hashID;
-  // };
 
   // возвращает сгенерированый hash id для контакта
   // учитывая имя поля id
@@ -427,14 +416,28 @@ const SORT_KEY = 'phone-sort3';
         const dataID = targetRow.id;
         // deteleDataContact(dataID);
         removeStorage(KEY, dataID); // удаляем из хранилища
-        targetRow.remove(); // удаляем строку из DOM
-        console.log(data); // выводим в консоль то что у нас вышло
-        // todo после каждого удаления контакта хорошо бы делать перерендер
+        // targetRow.remove(); // удаляем строку из DOM
+        // выводим в консоль то что у нас вышло
+        console.log(data);
+
+        // ? после каждого удаления контакта хорошо бы делать перерендер
+        // удаляем ряды контактов
+        while (list.firstElementChild) {
+          list.firstElementChild.remove();
+        }
+        // скрываем .delete в заголовке таблицы
+        if (objEvent.isShown) {
+          const head = list.parentElement.firstElementChild;
+          head.querySelector('.delete').classList.remove('is-visible');
+          objEvent.isShown = false;
+        }
+        // осктльные в таблице просто перерендерятся
+        // перерендериваем
+        renderContacts(list, data);
         return;
       }
     });
   };
-
 
   // добавляем новую строку с контактом в тело таблицы table.tbody
   const addContactPage = (newContact, list) => {
@@ -582,7 +585,6 @@ const SORT_KEY = 'phone-sort3';
     console.log('sortorder: ', sortorder);
     // * initial sorting
     for (const child of head.firstElementChild.children) {
-      console.log('child: ', child);
       child.classList.remove('ascending');
       child.classList.remove('descending');
       child.dataset.sortorder = '';
