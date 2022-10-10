@@ -21,7 +21,10 @@ const {
   setStorage,
   // makeDataContactsHashes,
   removeStorage,
+  getStorage,
 } = require('./serviceStorage');
+
+let {data} = require('./serviceStorage');
 
 const {
   renderContacts,
@@ -97,12 +100,6 @@ const deleteControl = ({data, btnDel, list, objEvent}) => {
         objEvent.isShown = false;
       }
 
-      // todooo move to renderContacts
-      // // удаляем строки из DOM
-      // while (list.lastChild) {
-      //   list.lastChild.remove();
-      // }
-      // перерисовка обновленного списка контактов
       renderContacts(list, data);
       return;
     }
@@ -123,10 +120,10 @@ const formControl = ({form, list, closeModal}) => {
     // записываем в локальное хранилище
     setStorage(KEY, newContact);
     // добавляем в DOM на страницу
-    addContactPage(newContact, list);
-    // todo make it сразу после добавления контакта
-    // todo сортировать перерендерить список
-    // renderContacts(...)
+    // addContactPage(newContact, list);
+    data = getStorage(KEY);
+    renderContacts(list, data);
+
     form.reset();
     closeModal();
   });

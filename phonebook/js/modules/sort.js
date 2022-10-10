@@ -3,6 +3,7 @@
 
 // * sortDataBy
 const sortDataBy = (sortby = '', sortorder = '', data) => {
+  console.log('before sorted data: ', data);
   let sorted = [];
   switch (sortby) {
     case 'by-name':

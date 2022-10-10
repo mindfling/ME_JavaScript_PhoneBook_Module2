@@ -98,7 +98,7 @@ let {data} = require('./modules/serviceStorage');
     };
 
     // ФУНКЦИОНАЛ ЗДЕСЬ
-    // todo init sort params: sortorder sortby
+    // init sort params: sortorder sortby
     if (!(sortInfo = JSON.parse(localStorage.getItem(SORT_KEY)))) {
       // если sortInfo неТ в хранилище
       // заполняем значением по умолчанию
@@ -125,11 +125,6 @@ let {data} = require('./modules/serviceStorage');
     }
 
     data = sortDataBy(sortInfo.sortby, sortInfo.sortorder, data);
-    console.log('after sort data: ', data);
-    // // сначала удаляем из DOM
-    // while (list.lastChild) {
-    //   list.lastChild.remove();
-    // }
     // потом перерендериваем
     const allRow = renderContacts(list, data);
 
@@ -179,13 +174,9 @@ let {data} = require('./modules/serviceStorage');
           objEventBtns.isShown = false;
         }
         // осктльные в таблице просто перерендерятся
-
+        data = getStorage(KEY);
         // сортируем
         const sortData = sortDataBy(sortInfo.sortby, sortInfo.sortorder, data);
-        // // удаляем строки из DOM
-        // while (list.lastChild) {
-        //   list.lastChild.remove();
-        // }
         // перерисовка обновленного списка контактов
         renderContacts(list, sortData);
       }
