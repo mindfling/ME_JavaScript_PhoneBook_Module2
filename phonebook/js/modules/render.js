@@ -1,6 +1,5 @@
 'use strict';
 
-
 const {
   createHeader,
   createLogo,
@@ -11,7 +10,6 @@ const {
   createFooter,
   createRow,
 } = require('./createElement');
-
 
 const renderPhonebook = (app, title) => {
   const header = createHeader();
@@ -51,6 +49,10 @@ const renderPhonebook = (app, title) => {
 };
 
 const renderContacts = (list, data) => {
+  // удаляем строки из DOM
+  while (list.lastChild) {
+    list.lastChild.remove();
+  }
   if (data) {
     const allRows = data.map(createRow);
     list.append(...allRows);

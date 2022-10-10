@@ -1,6 +1,5 @@
 'use strict';
 
-
 const {
   // createContainer,
   // createHeader,
@@ -13,8 +12,22 @@ const {
   createRow,
 } = require('./createElement');
 
+// let {data} = require('./serviceStorage');
+// const {data} = require('./serviceStorage');
 
-// * добавляем на каждый ряд слушателей
+const {
+  KEY,
+  // getStorage,
+  setStorage,
+  // makeDataContactsHashes,
+  removeStorage,
+} = require('./serviceStorage');
+
+const {
+  renderContacts,
+} = require('./render');
+
+// добавляем на каждый ряд слушателей
 const hoverRow = (allRow, logo) => {
   const text = logo.textContent;
   allRow.forEach(contact => {
@@ -27,7 +40,6 @@ const hoverRow = (allRow, logo) => {
   });
   return;
 };
-
 
 // функционал работы с модальной формой
 const modalControl = ({btnAdd, formOverlay, closeBtn, objEvent}) => {
@@ -60,36 +72,37 @@ const modalControl = ({btnAdd, formOverlay, closeBtn, objEvent}) => {
   };
 };
 
-const deleteControl = ({btnDel, list, objEvent}) => {
+const deleteControl = ({data, btnDel, list, objEvent}) => {
   // handleEvent obj клики по кнопкам Добавить и Удалить
   btnDel.addEventListener('click', objEvent);
 
   list.addEventListener('click', (e) => {
     const target = e.target;
+    // клик по клетке del
     if (target.closest('.del-icon')) {
       // ряд по которому кликнули
       const targetRow = target.closest('.contact');
       // id контакта из ряда
       const dataID = targetRow.id;
       // deteleDataContact(dataID);
-      removeStorage(KEY, dataID); // удаляем из хранилища
+      data = removeStorage(KEY, dataID); // удаляем из хранилища
       // targetRow.remove(); // удаляем строку из DOM
       // выводим в консоль то что у нас вышло
-      console.log(data);
+      console.log('del row from data: ', data);
 
-      // ? после каждого удаления контакта хорошо бы делать перерендер
-      // удаляем ряды контактов
-      while (list.firstElementChild) {
-        list.firstElementChild.remove();
-      }
-      // скрываем .delete в заголовке таблицы
+      // todo скрываем .delete в заголовке таблицы
       if (objEvent.isShown) {
         const head = list.parentElement.firstElementChild;
         head.querySelector('.delete').classList.remove('is-visible');
         objEvent.isShown = false;
       }
-      // осктльные в таблице просто перерендерятся
-      // перерендериваем
+
+      // todooo move to renderContacts
+      // // удаляем строки из DOM
+      // while (list.lastChild) {
+      //   list.lastChild.remove();
+      // }
+      // перерисовка обновленного списка контактов
       renderContacts(list, data);
       return;
     }

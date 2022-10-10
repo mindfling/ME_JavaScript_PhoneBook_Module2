@@ -2,7 +2,8 @@
 
 // GLOBAL KEYS and DATA
 let data = [];
-const KEY = 'phone-test2';
+const KEY = 'phone-test';
+// const KEY = 'phone-test2';
 // const SORT_KEY = 'phone-sort3';
 
 const {getContactHash} = require('./hash');
@@ -67,6 +68,7 @@ const removeStorage = (storageKey, id) => {
   });
   // сохраняем обратно в хранилище
   localStorage.setItem(storageKey, JSON.stringify(data));
+  return data;
 };
 
 

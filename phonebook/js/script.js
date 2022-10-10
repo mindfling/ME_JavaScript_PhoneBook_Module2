@@ -5,11 +5,11 @@
 // const KEY = 'phone-test2';
 const SORT_KEY = 'phone-sort3';
 
+let {data} = require('./modules/serviceStorage');
 
 {
-  // const {getContactHash} = require('./modules/hash');
+  console.log('data: ', data);
   // let data = [];
-  let {data} = require('./modules/serviceStorage');
   const {
     KEY,
     getStorage,
@@ -18,9 +18,7 @@ const SORT_KEY = 'phone-sort3';
     // removeStorage,
   } = require('./modules/serviceStorage');
 
-
   const {sortDataBy} = require('./modules/sort');
-
 
   const {
     hoverRow,
@@ -28,7 +26,6 @@ const SORT_KEY = 'phone-sort3';
     deleteControl,
     formControl,
   } = require('./modules/control');
-
 
   const {
     renderPhonebook,
@@ -40,10 +37,13 @@ const SORT_KEY = 'phone-sort3';
   const init = (selectorApp, title) => {
     const app = document.querySelector(selectorApp);
 
+    console.log('begin data: ', data);
     // читаем данные контактов из Хранилища
     data = getStorage(KEY);
+    console.log('init data: ', data);
     // обновляем хэши id контактов
     makeDataContactsHashes(data);
+    console.log('hash data: ', data);
     // сохраняем обратно в хранилище
     localStorage.setItem(KEY, JSON.stringify(data));
     // перенести в makeDataContactsHashes
@@ -101,7 +101,6 @@ const SORT_KEY = 'phone-sort3';
 
     // ФУНКЦИОНАЛ ЗДЕСЬ
     // todo init sort params: sortorder sortby
-
     if (!(sortInfo = JSON.parse(localStorage.getItem(SORT_KEY)))) {
       // если sortInfo неТ в хранилище
       // заполняем значением по умолчанию
@@ -116,11 +115,11 @@ const SORT_KEY = 'phone-sort3';
       console.log('начальные значения в хранилище sortInfo:', sortInfo);
     }
 
-    // initial sorting
+    // initial rows sorting
     for (const child of head.firstElementChild.children) {
-      // ? child.classList.remove('ascending');
-      // ? child.classList.remove('descending');
-      // ? child.dataset.sortorder = '';
+      //   child.classList.remove('ascending');
+      //   child.classList.remove('descending');
+      //   child.dataset.sortorder = '';
       if (child.dataset.sortby === sortInfo.sortby) {
         child.classList.add(sortInfo.sortorder);
         child.dataset.sortorder = sortInfo.sortorder; // flag
@@ -128,18 +127,18 @@ const SORT_KEY = 'phone-sort3';
     }
 
     data = sortDataBy(sortInfo.sortby, sortInfo.sortorder, data);
-    // сначала удаляем из DOM
-    while (list.lastChild) {
-      list.lastChild.remove();
-    }
+    console.log('after sort data: ', data);
+    // // сначала удаляем из DOM
+    // while (list.lastChild) {
+    //   list.lastChild.remove();
+    // }
     // потом перерендериваем
-    // renderContacts(list, data);
     const allRow = renderContacts(list, data);
 
     head.addEventListener('click', e => {
       const target = e.target;
 
-      // * click по клеткам заголовка таблицы для сортировки
+      // click по клеткам заголовка таблицы для сортировки
       if (target.classList.contains('table__cell_head')) {
         // перебираем все дочерние клетки ряда заголовка таблицы
         for (const child of head.firstElementChild.children) {
@@ -185,10 +184,10 @@ const SORT_KEY = 'phone-sort3';
 
         // сортируем
         const sortData = sortDataBy(sortInfo.sortby, sortInfo.sortorder, data);
-        // удаляем строки из DOM
-        while (list.lastChild) {
-          list.lastChild.remove();
-        }
+        // // удаляем строки из DOM
+        // while (list.lastChild) {
+        //   list.lastChild.remove();
+        // }
         // перерисовка обновленного списка контактов
         renderContacts(list, sortData);
       }
@@ -202,7 +201,7 @@ const SORT_KEY = 'phone-sort3';
       closeBtn,
       objEvent: objEventBtns,
     });
-    deleteControl({btnDel, list, objEvent: objEventBtns});
+    deleteControl({data, btnDel, list, objEvent: objEventBtns});
     formControl({form, list, closeModal});
   };
 

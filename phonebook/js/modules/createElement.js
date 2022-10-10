@@ -177,7 +177,6 @@ const createFooter = () => {
   return footer;
 };
 
-
 const createRow = ({name: firstname, surname, phone, id}) => {
   const tr = document.createElement('tr');
   // проверка на undefined на существование поля
