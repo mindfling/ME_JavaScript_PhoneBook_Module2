@@ -66,23 +66,6 @@ const createTable = (data) => {
     </tr>
   `);
   */
-  /*
-  thead.insertAdjacentHTML('beforeend', `
-    <tr class="table__row_head">
-      <th class="delete">Удалить</th>
-      <th class="table__cell_head by-name"
-            data-sortby="by-name"
-            title="Сортировать по Имени">Имя</th>
-            <th class="table__cell_head"
-            data-sortby="by-surname"
-            title="Сортировать по Фамилии">Фамилия</th>
-            <th class="table__cell_head by-phone descending"
-            data-sortby="by-phone"
-            title="Сортировать по номеру телефона">Телефон</th>
-    </tr>
-  `);
-  */
-
   thead.insertAdjacentHTML('beforeend', `
     <tr class="table__row_head">
       <th class="delete">Удалить</th>
@@ -180,13 +163,7 @@ const createFooter = () => {
 const createRow = ({name: firstname, surname, phone, id}) => {
   const tr = document.createElement('tr');
   // проверка на undefined на существование поля
-  if (id) {
-    tr.id = id;
-    // этот id ряда конткта для идентификации
-  } else {
-    tr.id = 'tr' + hashCode(firstname) + hashCode(surname) + hashCode(phone);
-    // такой id не существует
-  }
+  tr.id = id; // ? нужна ли проверка ?
   tr.classList.add('contact');
   tr.title = `Контакт ${surname} ${firstname}`;
 

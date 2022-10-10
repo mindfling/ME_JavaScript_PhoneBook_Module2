@@ -40,12 +40,10 @@ let {data} = require('./modules/serviceStorage');
     console.log('begin data: ', data);
     // читаем данные контактов из Хранилища
     data = getStorage(KEY);
-    console.log('init data: ', data);
+    console.log('getStorage data: ', data);
     // обновляем хэши id контактов
-    makeDataContactsHashes(data);
-    console.log('hash data: ', data);
-    // сохраняем обратно в хранилище
-    localStorage.setItem(KEY, JSON.stringify(data));
+    data = makeDataContactsHashes(data);
+
     // перенести в makeDataContactsHashes
 
     // читаем данные о сортировке

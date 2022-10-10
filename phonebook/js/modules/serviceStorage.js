@@ -6,7 +6,9 @@ const KEY = 'phone-test';
 // const KEY = 'phone-test2';
 // const SORT_KEY = 'phone-sort3';
 
-const {getContactHash} = require('./hash');
+const {
+  getContactHash,
+} = require('./hash');
 
 // читает и возвращает данные data из Хранилища
 const getStorage = (storageKey) => {
@@ -18,7 +20,6 @@ const getStorage = (storageKey) => {
 };
 
 // читает данные из хранилища добавляет к ним контакт
-// и снова перезависывает данные в хранилище
 const setStorage = (storageKey, contact = {}) => {
   // читаем текущие данные
   data = getStorage(KEY);
@@ -42,21 +43,12 @@ const setStorage = (storageKey, contact = {}) => {
   }
   // дабавляем контакт в data
   data.push(contact);
+  // и снова перезависывает данные в хранилище
   // обновляем данные в хранилище
   localStorage.setItem(storageKey, JSON.stringify(data));
 };
 
-//  генерирует добавляет .id для каждого контакта объкта в массиве data
-const makeDataContactsHashes = (data) => {
-  if (Array.isArray(data) && data.length > 0) {
-    return data.map((contact, index) => {
-      contact.id = getContactHash(contact);
-    });
-  } else {
-    return [];
-  }
-};
-
+// читаем данные удаляем обновляем и перезаписываем
 const removeStorage = (storageKey, id) => {
   // читаем текущие данные
   data = getStorage(KEY);
@@ -71,6 +63,23 @@ const removeStorage = (storageKey, id) => {
   return data;
 };
 
+//  генерирует добавляет .id для каждого контакта объкта в массиве data
+// добавляет хэши в массив возвращает и перезаписывает в хранилище
+const makeDataContactsHashes = (data) => {
+  let result;
+  if (Array.isArray(data) && data.length > 0) {
+    result = data.map((contact, index) => {
+      contact.id = getContactHash(contact);
+      return contact;
+    });
+  } else {
+    result = [];
+  }
+  // также сохраняем в хранилище
+  localStorage.setItem(KEY, JSON.stringify(result));
+  return result;
+};
+
 
 // * exports
 module.exports = {
@@ -78,6 +87,6 @@ module.exports = {
   KEY,
   getStorage,
   setStorage,
-  makeDataContactsHashes,
   removeStorage,
+  makeDataContactsHashes,
 };
