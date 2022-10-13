@@ -1,17 +1,12 @@
-'use strict';
-
-// GLOBAL KEYS and DATA
+import getContactHash from './hash.js';
 let data = [];
-const KEY = 'phone-test';
+export const dataStorage = {data};
+export const KEY = 'phone-test';
 // const KEY = 'phone-test2';
 // const SORT_KEY = 'phone-sort3';
 
-const {
-  getContactHash,
-} = require('./hash');
-
 // читает и возвращает данные data из Хранилища
-const getStorage = (storageKey) => {
+export const getStorage = (storageKey) => {
   let result = JSON.parse(localStorage.getItem(KEY));
   if (!Array.isArray(result)) {
     result = [];
@@ -20,7 +15,7 @@ const getStorage = (storageKey) => {
 };
 
 // читает данные из хранилища добавляет к ним контакт
-const setStorage = (storageKey, contact = {}) => {
+export const setStorage = (storageKey, contact = {}) => {
   // читаем текущие данные
   data = getStorage(KEY);
   // проверяем пустой ли и масив ли вообще
@@ -49,7 +44,7 @@ const setStorage = (storageKey, contact = {}) => {
 };
 
 // читаем данные удаляем обновляем и перезаписываем
-const removeStorage = (storageKey, id) => {
+export const removeStorage = (storageKey, id) => {
   // читаем текущие данные
   data = getStorage(KEY);
   // удаляем из массива контакт с этим id
@@ -65,7 +60,7 @@ const removeStorage = (storageKey, id) => {
 
 //  генерирует добавляет .id для каждого контакта объкта в массиве data
 // добавляет хэши в массив возвращает и перезаписывает в хранилище
-const makeDataContactsHashes = (data) => {
+export const makeDataContactsHashes = (data) => {
   let result;
   if (Array.isArray(data) && data.length > 0) {
     result = data.map((contact, index) => {
@@ -78,15 +73,4 @@ const makeDataContactsHashes = (data) => {
   // также сохраняем в хранилище
   localStorage.setItem(KEY, JSON.stringify(result));
   return result;
-};
-
-
-// * exports
-module.exports = {
-  data,
-  KEY,
-  getStorage,
-  setStorage,
-  removeStorage,
-  makeDataContactsHashes,
 };

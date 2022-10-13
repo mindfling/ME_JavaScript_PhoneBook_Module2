@@ -1,6 +1,4 @@
-'use strict';
-
-const {
+import {
   createHeader,
   createLogo,
   createMain,
@@ -9,9 +7,10 @@ const {
   createForm,
   createFooter,
   createRow,
-} = require('./createElement');
+} from './createElement.js';
 
-const renderPhonebook = (app, title) => {
+
+export const renderPhonebook = (app, title) => {
   const header = createHeader();
   const logo = createLogo(title);
   const main = createMain();
@@ -48,7 +47,7 @@ const renderPhonebook = (app, title) => {
   };
 };
 
-const renderContacts = (list, data) => {
+export const renderContacts = (list, data) => {
   // удаляем строки из DOM
   while (list.lastChild) {
     list.lastChild.remove();
@@ -60,10 +59,4 @@ const renderContacts = (list, data) => {
   } else {
     return [];
   }
-};
-
-
-module.exports = {
-  renderPhonebook,
-  renderContacts,
 };

@@ -1,6 +1,5 @@
-'use strict';
+// * js module using ES Modules
 
-// * js module using CJS for hash
 //  возвращает hashCode по строке str
 const hashCode = (str) => {
   let hash = 0;
@@ -30,7 +29,5 @@ const getContactHash = (contact = {}) => {
   return hashID;
 };
 
-// * экспортируем в составе модуля
-module.exports = {
-  getContactHash,
-};
+// * экспортируем по умолчанию в составе ESM модуля
+export default getContactHash;

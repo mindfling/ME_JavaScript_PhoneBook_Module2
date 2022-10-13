@@ -1,5 +1,4 @@
-'use strict';
-
+// * module createElement
 
 const createContainer = () => {
   const container = document.createElement('div');
@@ -7,7 +6,7 @@ const createContainer = () => {
   return container;
 };
 
-const createHeader = () => {
+export const createHeader = () => {
   const header = document.createElement('header');
   header.classList.add('header');
   const headerContainer = createContainer();
@@ -16,14 +15,14 @@ const createHeader = () => {
   return header;
 };
 
-const createLogo = title => {
+export const createLogo = title => {
   const h1 = document.createElement('h1');
   h1.classList.add('logo');
   h1.textContent = `Телефонный справочник. ${title}`;
   return h1;
 };
 
-const createMain = () => {
+export const createMain = () => {
   const main = document.createElement('main');
   const mainContainer = createContainer();
   main.append(mainContainer);
@@ -31,7 +30,7 @@ const createMain = () => {
   return main;
 };
 
-const createButtonGroup = params => {
+export const createButtonGroup = params => {
   const btnWrapper = document.createElement('div');
   btnWrapper.classList.add('btn-wrapper');
 
@@ -51,7 +50,7 @@ const createButtonGroup = params => {
   };
 };
 
-const createTable = (data) => {
+export const createTable = (data) => {
   const table = document.createElement('table');
   table.classList.add('table', 'table-striped');
   // генерим заголовок таблицы
@@ -92,7 +91,7 @@ const createTable = (data) => {
   return table;
 };
 
-const createForm = () => {
+export const createForm = () => {
   const overlay = document.createElement('div');
   overlay.classList.add('form-overlay');
   const form = document.createElement('form');
@@ -150,7 +149,7 @@ const createForm = () => {
   };
 };
 
-const createFooter = () => {
+export const createFooter = () => {
   const footer = document.createElement('footer');
   footer.classList.add('footer');
   const footerContainer = createContainer();
@@ -160,7 +159,7 @@ const createFooter = () => {
   return footer;
 };
 
-const createRow = ({name: firstname, surname, phone, id}) => {
+export const createRow = ({name: firstname, surname, phone, id}) => {
   const tr = document.createElement('tr');
   // проверка на undefined на существование поля
   tr.id = id; // ? нужна ли проверка ?
@@ -188,17 +187,4 @@ const createRow = ({name: firstname, surname, phone, id}) => {
 
   tr.append(tdDel, tdName, tdSurname, tdPhone);
   return tr;
-};
-
-
-module.exports = {
-  // createContainer,
-  createHeader,
-  createLogo,
-  createMain,
-  createButtonGroup,
-  createTable,
-  createForm,
-  createFooter,
-  createRow,
 };

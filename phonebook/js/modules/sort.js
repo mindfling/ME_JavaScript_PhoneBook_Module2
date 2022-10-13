@@ -1,8 +1,5 @@
-'use strict';
-
-
 // * sortDataBy
-const sortDataBy = (sortby = '', sortorder = '', data) => {
+export const sortDataBy = (sortby = '', sortorder = '', data) => {
   console.log('before sorted data: ', data);
   let sorted = [];
   switch (sortby) {
@@ -71,6 +68,4 @@ const sortDataBy = (sortby = '', sortorder = '', data) => {
   return sorted;
 };
 
-module.exports = {
-  sortDataBy,
-};
+// export default sortDataBy;

@@ -1,38 +1,25 @@
-'use strict';
+import {
+  dataStorage,
+  KEY,
+  getStorage,
+  makeDataContactsHashes,
+} from './modules/serviceStorage.js ';
+import {
+  hoverRow,
+  modalControl,
+  deleteControl,
+  formControl,
+} from './modules/control.js';
 
-// // GLOBAL KEYS and DATA
-// let data = [];
-// const KEY = 'phone-test2';
+let data = dataStorage['data']; // так передаем ссылку на константу data
+import {renderPhonebook, renderContacts} from './modules/render.js';
+// import data from './modules/serviceStorage.js';
+
+import {sortDataBy} from './modules/sort.js';
+
 const SORT_KEY = 'phone-sort3';
 
-let {data} = require('./modules/serviceStorage');
-
 {
-  console.log('data: ', data);
-  // let data = [];
-  const {
-    KEY,
-    getStorage,
-    // setStorage,
-    makeDataContactsHashes,
-    // removeStorage,
-  } = require('./modules/serviceStorage');
-
-  const {sortDataBy} = require('./modules/sort');
-
-  const {
-    hoverRow,
-    modalControl,
-    deleteControl,
-    formControl,
-  } = require('./modules/control');
-
-  const {
-    renderPhonebook,
-    renderContacts,
-  } = require('./modules/render');
-
-
   // * MAIN INIT *
   const init = (selectorApp, title) => {
     const app = document.querySelector(selectorApp);
@@ -44,11 +31,9 @@ let {data} = require('./modules/serviceStorage');
     // обновляем хэши id контактов
     data = makeDataContactsHashes(data);
 
-    // перенести в makeDataContactsHashes
-
     // читаем данные о сортировке
     let sortInfo = {};
-    // let sortInfo = JSON.parse(localStorage.getItem(SORT_KEY)); // todo
+    // let sortInfo = JSON.parse(localStorage.getItem(SORT_KEY)); //
 
     const {
       head, // table thead
@@ -113,7 +98,6 @@ let {data} = require('./modules/serviceStorage');
       console.log('начальные значения в хранилище sortInfo:', sortInfo);
     }
 
-    // initial rows sorting
     for (const child of head.firstElementChild.children) {
       //   child.classList.remove('ascending');
       //   child.classList.remove('descending');
@@ -143,7 +127,6 @@ let {data} = require('./modules/serviceStorage');
               child.classList.add('descending');
               console.log('empty to ascending');
             }
-
             if (child.dataset.sortorder === 'ascending') {
               child.dataset.sortorder = 'descending';
               child.classList.remove('ascending');
@@ -166,13 +149,14 @@ let {data} = require('./modules/serviceStorage');
         sortInfo.sortorder = target.dataset?.sortorder;
         // обновляем данные о сортировке в хранилище
         localStorage.setItem(SORT_KEY, JSON.stringify(sortInfo));
-
+        console.log('начальные значения в хранилище sortInfo:', sortInfo);
 
         if (objEventBtns.isShown) {
           console.log('delete скрываем');
           head.querySelector('.delete').classList.remove('is-visible');
           objEventBtns.isShown = false;
         }
+
         // осктльные в таблице просто перерендерятся
         data = getStorage(KEY);
         // сортируем
