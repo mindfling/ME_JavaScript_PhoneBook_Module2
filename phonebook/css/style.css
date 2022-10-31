@@ -132,7 +132,8 @@ body {
 .table__cell_head {
   opacity: 1;
   /* cursor: url(./purple-hand-cur.cur), default; */
-  cursor: url(./purple-hand.cur), default;
+  /* cursor: url(./purple-hand.cur), default; */
+  cursor: url(../cur/blue-hand.cur), default;
   transition: all 400ms ease;
 }
 
@@ -147,42 +148,93 @@ body {
 }
 
 .table__cell_head:hover {
-  opacity: 0.65;
+  opacity: 0.8;
 }
 
-.table__cell_head.ascending {
-  /* color: blueviolet; */
+.table__cell_head,
+.table__cell_head.ascending,
+.table__cell_head.descending {
   color: black;
+  position: relative;
 }
 
-.table__cell_head.ascending::after {
-  display: inline-block;
+.table__cell_head::before,
+.table__cell_head::after,
+.table__cell_head.ascending::before,
+.table__cell_head.descending::before,
+.table__cell_head.ascending::after,
+.table__cell_head.descending::after {
+  opacity: .1;
+  display: block;
   content: "";
+  position: absolute;
   width: 10px;
   height: 8px;
   background-color: transparent;
+}
+.table__cell_head::before,
+.table__cell_head.ascending::before,
+.table__cell_head.descending::before {
+  top: 10px;
+  right: 10px;
   border-top: 0;
   border-right: 6px solid transparent;
   border-bottom: 8px solid #0d0d0d;
   border-left: 6px solid transparent;
-  margin: 0 0 1px 4px;
 }
-
+.table__cell_head::after,
+.table__cell_head.ascending::after,
 .table__cell_head.descending::after {
-  display: inline-block;
-  content: "";
-  background-color: transparent;
-  width: 10px;
-  height: 8px;
+  bottom: 10px;
+  right: 10px;
   border-top: 8px solid #0d0d0d;
   border-right: 6px solid transparent;
   border-bottom: 0;
   border-left: 6px solid transparent;
-  margin: 0 0 0px 4px;
 }
 
-.table__cell_head.descending {
-  color: black;
+.table__cell_head.ascending::before {
+  /* * ▲ * */
+  opacity: 1;
+}
+.table__cell_head.ascending::after {
+  /* ▼ */
+  opacity: .1;
+}
+.table__cell_head.descending::before {
+  /* ▲ */
+  opacity: .1;
+}
+.table__cell_head.descending::after {
+  /* * ▼ * */
+  opacity: 1;
+}
+
+/* hover arrows */
+.table__cell_head:hover::before,
+.table__cell_head.ascending:hover::before,
+.table__cell_head.descending:hover::before,
+.table__cell_head:hover:after,
+.table__cell_head.ascending:hover::after,
+.table__cell_head.descending:hover::after {
+  /* opacity: .4; */
+  color: #007bff;
+}
+.table__cell_head:hover:before,
+.table__cell_head.ascending:hover::before,
+.table__cell_head.descending:hover::before {
+  /* border-top: 0;
+  border-right: 6px solid transparent;
+  border-bottom: 8px solid #007bff;
+  border-left: 6px solid transparent; */
+}
+.table__cell_head:hover:after,
+.table__cell_head.ascending:hover::after,
+.table__cell_head.descending:hover::after {
+  /* border-top: 8px solid #007bff;
+  border-right: 6px solid transparent;
+  border-bottom: 0;
+  border-left: 6px solid transparent; */
 }
 
 .demo {
@@ -198,4 +250,9 @@ body {
 
 .demo__storage_session {
   margin-bottom: 10px;
+}
+
+::selection {
+  background-color: #007bff56;
+  color: #00000055;
 }
