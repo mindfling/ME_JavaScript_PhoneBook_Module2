@@ -1,17 +1,19 @@
-import {createRow} from './createElement.js';
-import {
-  KEY,
-  setStorage,
-  removeStorage,
-  getStorage,
-} from './serviceStorage.js';
+// * control
+// логика управления элементами
 
-let data = [];
+import {
+  // KEY as storageDataKey,
+  addContactData as setStorage,
+  removeContactData as removeStorage,
+  getContactData as getStorage,
+} from './serviceStorage.js';
 
 import {renderContacts} from './render.js';
 
+
 export const hoverRow = (allRow, logo) => {
-  const text = logo.textContent;
+  // меняет заголовок Logo при наведении на соответствующий контакт
+  const text = logo?.textContent;
   allRow.forEach(contact => {
     contact.addEventListener('mouseenter', () => {
       logo.textContent = contact.phoneLink?.textContent;
@@ -23,7 +25,12 @@ export const hoverRow = (allRow, logo) => {
   return;
 };
 
-export const modalControl = ({btnAdd, formOverlay, closeBtn, objEvent}) => {
+export const modalControl = ({
+  btnAdd,
+  closeBtn,
+  formOverlay,
+  objEvent,
+}) => {
   // открыть модалку
   const openModal = () => {
     formOverlay.classList.add('is-visible');
@@ -43,13 +50,20 @@ export const modalControl = ({btnAdd, formOverlay, closeBtn, objEvent}) => {
       closeModal();
     }
   });
+  // возвращаем функции формы
   return {
     openModal,
     closeModal,
   };
 };
 
-export const deleteControl = ({data, btnDel, list, objEvent}) => {
+export const deleteControl = ({
+  data,
+  btnDel,
+  list,
+  objEvent,
+  logo,
+}) => {
   // handleEvent obj клики по кнопкам Добавить и Удалить
   btnDel.addEventListener('click', objEvent);
 
@@ -60,38 +74,46 @@ export const deleteControl = ({data, btnDel, list, objEvent}) => {
       // ряд по которому кликнули
       const targetRow = target.closest('.contact');
       // id контакта из ряда
-      const dataID = targetRow.id;
-      data = removeStorage(KEY, dataID); // удаляем из хранилища
+      const phoneID = targetRow.id;
+      console.log('Удаляем контакт with phone: ', phoneID);
+      removeStorage(phoneID); // удаляем из хранилища
       // выводим в консоль то что у нас вышло
       if (objEvent.isShown) {
         const head = list.parentElement.firstElementChild;
         head.querySelector('.delete').classList.remove('is-visible');
         objEvent.isShown = false;
       }
-      renderContacts(list, data);
+      data = getStorage();
+      // перерендериваем все
+      // // renderContacts(list, data);
+      // перендериваем и вешаем обработчик на каждый контакт
+      const allRows = renderContacts(list, data);
+      hoverRow(allRows, logo); // навешиваем слушателей hover при инициализации
       return;
     }
   });
 };
 
-export const addContactPage = (contact, list) => {
-  list.append(createRow(contact));
-};
-
-export const formControl = ({form, list, closeModal}) => {
+export const formControl = ({
+  form,
+  list,
+  closeModal,
+  logo,
+}) => {
   form.addEventListener('submit', (e) => {
-    e.preventDefault();
+    e.preventDefault(); // предотвращение действия submit
     const formData = new FormData(e.target); // данные из формы
     // формируем объект контакт из значений полей формы
     const newContact = Object.fromEntries(formData);
-    // записываем в локальное хранилище
-    setStorage(KEY, newContact);
+    setStorage(newContact);
     // добавляем в DOM на страницу
     // addContactPage(newContact, list);
-    data = getStorage(KEY);
-    renderContacts(list, data);
-
-    form.reset();
-    closeModal();
+    const data = getStorage();
+    // перерендериваем все
+    // renderContacts(list, data);
+    const allRows = renderContacts(list, data);
+    hoverRow(allRows, logo); // навешиваем слушателей hover при инициализации
+    form.reset(); // сброс очистка формы
+    closeModal(); // закрываем модалку
   });
 };

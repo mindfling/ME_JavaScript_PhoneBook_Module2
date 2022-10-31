@@ -1,76 +1,31 @@
-import getContactHash from './hash.js';
-let data = [];
-export const dataStorage = {data};
-export const KEY = 'phone-test';
-// const KEY = 'phone-test2';
-// const SORT_KEY = 'phone-sort3';
+export const KEY = 'phonebook9';
 
-// читает и возвращает данные data из Хранилища
-export const getStorage = (storageKey) => {
-  let result = JSON.parse(localStorage.getItem(KEY));
-  if (!Array.isArray(result)) {
-    result = [];
-  }
-  return result;
+/*
+* maks
+export const getContactData = () => (localStorage.getItem(KEY) ?
+JSON.parse(localStorage.getItem(KEY)) : []);
+*/
+
+// получаем текущие данные из хранилища
+export const getContactData = () => {
+  const storageData = localStorage.getItem(KEY);
+  return (storageData ? JSON.parse(storageData) : []);
 };
 
-// читает данные из хранилища добавляет к ним контакт
-export const setStorage = (storageKey, contact = {}) => {
-  // читаем текущие данные
-  data = getStorage(KEY);
-  // проверяем пустой ли и масив ли вообще
-  if (!Array.isArray(data)) {
-    data = [];
-  }
-  // проверка на имя полей name, surname, phone
-  if (contact.name === undefined) {
-    contact.name = '';
-  }
-  if (contact.surname === undefined) {
-    contact.surname = '';
-  }
-  if (contact.phone === undefined) {
-    contact.phone = '';
-  }
-  // дабавляем хэш
-  if (contact.id === undefined) {
-    contact.id = getContactHash(contact);
-  }
-  // дабавляем контакт в data
+// сохраняем данные обратно в хранилище
+export const setContactData = (data) =>
+  localStorage.setItem(KEY, JSON.stringify(data));
+
+// добавляем контакт к данным
+export const addContactData = (contact) => {
+  const data = getContactData(KEY);
   data.push(contact);
-  // и снова перезависывает данные в хранилище
-  // обновляем данные в хранилище
-  localStorage.setItem(storageKey, JSON.stringify(data));
+  setContactData(data);
 };
 
-// читаем данные удаляем обновляем и перезаписываем
-export const removeStorage = (storageKey, id) => {
-  // читаем текущие данные
-  data = getStorage(KEY);
-  // удаляем из массива контакт с этим id
-  data.forEach((contact, index, arr) => {
-    if (contact.id === id) {
-      data.splice(index, 1);
-    }
-  });
-  // сохраняем обратно в хранилище
-  localStorage.setItem(storageKey, JSON.stringify(data));
-  return data;
-};
-
-//  генерирует добавляет .id для каждого контакта объкта в массиве data
-// добавляет хэши в массив возвращает и перезаписывает в хранилище
-export const makeDataContactsHashes = (data) => {
-  let result;
-  if (Array.isArray(data) && data.length > 0) {
-    result = data.map((contact, index) => {
-      contact.id = getContactHash(contact);
-      return contact;
-    });
-  } else {
-    result = [];
-  }
-  // также сохраняем в хранилище
-  localStorage.setItem(KEY, JSON.stringify(result));
-  return result;
+// удаляем контакт из хранилища по номеру телефона
+export const removeContactData = phone => {
+  const data = getContactData(KEY);
+  const newData = data.filter(item => item.phone !== phone); // фильтруем
+  setContactData(newData);
 };

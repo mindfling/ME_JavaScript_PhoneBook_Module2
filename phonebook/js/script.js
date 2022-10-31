@@ -1,4 +1,4 @@
-// * PhoneBook module2lesson10
+// * PhoneBook module2lesson9
 
 import {
   // addContactData as setStorage,
@@ -25,12 +25,11 @@ import {
     // корневой селектор приложения
     const app = document.querySelector(selectorApp);
     // читаем данные контактов из Хранилища
-    // // const data = getContactData(); // или
     const data = getStorage();
     console.log('data in localstorage: ', data);
 
     const {
-      head, // ? table thead for sort
+      // head, // ? table thead for sort
       list, // table tbody
       logo,
       btnAdd,
